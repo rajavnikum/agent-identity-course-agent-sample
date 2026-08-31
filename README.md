@@ -152,12 +152,10 @@ The administrative API client is used by the setup scripts to:
 
 Configure the API client with the following entitlements:
 
-| **Entitlement** | **Why it is required** |
-|---|---|
-| **Configure AI agents** | Required to create and update the Agent Registry record used by this sample. |
-| **Review and manage AI agent status** | Required to move the agent through the required lifecycle state, for example from `UNDER_REVIEW` to `ACTIVE`. |
-| **Manage OIDC dynamic clients** | Required to create the OAuth/OIDC client used by the agent through Dynamic Client Registration. |
-| **Manage Authorization Detail Types** | Required only if the Authorization Details Type used by this sample is created through the administrative API client. |
+| **Entitlement** | **API entitlement** | **Why it is required** |
+|---|---|---|
+| **Configure AI agents** | `writeAgents` | Required to create and update the Agent Registry record used by this sample. |
+| **Manage OIDC client registration dynamically** | `manageOidcDynamicClient` | Required to create the agent OAuth client through Dynamic Client Registration when DCR requires bearer-token authentication. |
 
 
 Do not select unrelated administrative entitlements. They are not required by this sample.
