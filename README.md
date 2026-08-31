@@ -157,7 +157,6 @@ Configure the API client with the following entitlements:
 | **Configure AI agents** | `writeAgents` | Required to create and update the Agent Registry record used by this sample. |
 | **Manage OIDC client registration dynamically** | `manageOidcDynamicClient` | Required to create the agent OAuth client through Dynamic Client Registration when DCR requires bearer-token authentication. |
 
-
 Do not select unrelated administrative entitlements. They are not required by this sample.
 
 After creating the API client, record its client ID and client secret:
@@ -232,7 +231,7 @@ Create the agent and include the actor client in `oauthClients`:
 export TENANT_URL="https://<tenant>"
 export ADMIN_ACCESS_TOKEN="<admin-access-token>"
 export ACTOR_CLIENT_ID="<actor-client-id>"
-export ACTOR_CLIENT_REFERENCE="<client reference used by your tenant>"
+
 
 curl --request POST "$TENANT_URL/v1.0/Agents" \
   --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
@@ -249,23 +248,19 @@ The sample payload uses:
   "description": "Conversational AI agent that invokes protected course tools",
   "oauthClients": [
     {
-      "issuer": "${ACTOR_CLIENT_REFERENCE}",
+      
       "clientId": "${ACTOR_CLIENT_ID}",
       "purposes": ["agent_id", "authentication"]
     }
   ],
-  "status": "ACTIVE",
+  
   "tags": ["course-agent", "direct-tools", "conversational-ai"]
 }
 ```
 
-> `ACTOR_CLIENT_REFERENCE` is intentionally configurable. Use the OAuth-client reference format returned/exposed by your IBM Verify environment. The source collection supplied with this sample used an environment-specific application/client reference; do not hard-code that tenant value.
-
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
 > Add the Agent Registry record screenshot as `images/uc1-03-agent-registry.png`.
-
-
 
 >  Please refer to Onboarding Agents to validate it is correctly onboarded.
 
