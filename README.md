@@ -145,8 +145,6 @@ The administrative API client is used by the setup scripts to:
 
 - create and manage the AI agent in the Agent Registry;
 - create the OAuth client used by the agent;
-- update the agent lifecycle status when required; and
-- create or manage the Authorization Details Type if that step is automated.
 
 ### Required entitlements
 
