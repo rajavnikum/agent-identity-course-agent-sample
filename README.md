@@ -203,7 +203,6 @@ ACTOR_CLIENT_ID=<client_id>
 ACTOR_CLIENT_SECRET=<client_secret>
 ```
 
-
 ### Postman
 
 1. Import `api-clients/postman/uc1-ibm-verify-setup.postman_collection.json`.
