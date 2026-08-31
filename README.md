@@ -303,7 +303,7 @@ SUBJECT_CLIENT_SECRET=<subject client secret, when required>
 
 ## Step 5 — Create the Authorization Details Type
 
-To know more visit Authorization Details Type :https://docs.verify.ibm.com/ibm-security-verify-access/docs/tasks-rar
+To know more on Authorization Details Type visit :https://docs.verify.ibm.com/ibm-security-verify-access/docs/tasks-rar
 
 The application builds an authorization detail with the type:
 
