@@ -266,7 +266,7 @@ In Postman, continue the same setup collection:
 7. The response stores `agent_id` when the response includes `id`.
 8. Run **04 - Get Agent Details** and verify `oauthClients` contains the actor client.
 
-For more info on onboarding ,please refer :https://www.ibm.com/docs/en/agent-identity?topic=tasks-onboarding-ai-agent
+For more info on onboarding of Agents,please refer :https://www.ibm.com/docs/en/agent-identity?topic=tasks-onboarding-ai-agent
 
 ## Step 4 — Configure the human subject application
 
