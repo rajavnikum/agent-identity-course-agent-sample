@@ -261,6 +261,7 @@ Associate the "Actor Identity client" to the onboarded Agent.
 
 
 In Postman, continue the same setup collection:
+
 6. Run **03 - Create Agent and Associate Actor Client**.
 7. The response stores `agent_id` when the response includes `id`.
 8. Run **04 - Get Agent Details** and verify `oauthClients` contains the actor client.
