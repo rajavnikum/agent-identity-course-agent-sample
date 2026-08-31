@@ -198,7 +198,7 @@ Capture the returned:
 ACTOR_CLIENT_ID=<client_id>
 ACTOR_CLIENT_SECRET=<client_secret>
 ```
-
+Note:Change Access token format to "JWT" from "Default"
 ### Postman
 
 1. Import `api-clients/postman/uc1-ibm-verify-setup.postman_collection.json`.
@@ -287,6 +287,7 @@ Capture:
 SUBJECT_CLIENT_ID=<subject client ID>
 SUBJECT_CLIENT_SECRET=<subject client secret, when required>
 ```
+Note:Change Access token format to "JWT" from "Default"
 
 ![Subject application configuration](images/uc1-05-subject-client.png)
 
@@ -353,6 +354,8 @@ Capture:
 STS_CLIENT_ID=<STS client ID>
 STS_CLIENT_SECRET=<STS client secret>
 ```
+Note:Change Access token format to "JWT" from "Default"
+
 > Note : The client ID of the Token Exchange application needs to placed as STS_CLIENT_ID and respective SECRET
 
 ## Step 7 — Configure the application
