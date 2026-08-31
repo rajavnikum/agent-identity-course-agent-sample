@@ -287,7 +287,7 @@ Capture:
 SUBJECT_CLIENT_ID=<subject client ID>
 SUBJECT_CLIENT_SECRET=<subject client secret, when required>
 ```
-Note:Change Access token format to "JWT" from "Default". Under Introspect , register the actor client id with may_act attribute.
+Note:Change Access token format to "JWT" from "Default". Under Introspect , register the actor client id with may_act attribute
 
 ![Subject application configuration](images/uc1-05-subject-client.png)
 
