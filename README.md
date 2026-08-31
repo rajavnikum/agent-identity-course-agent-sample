@@ -139,22 +139,36 @@ The resulting API call carries both **subject context** and **actor context**, a
 
 ## Step 1 — Create an IBM Verify administrative API client
 
-The setup API calls need an administrative access token. Create an IBM Verify API client with the minimum entitlements required by your environment.
+Create an IBM Verify API client with only the entitlements required to configure this sample.
 
-To create on IBM verify go to  Admin Console on Security --> API access --> Add API client
+The administrative API client is used by the setup scripts to:
 
-For DCR configured with bearer-token authentication, IBM Verify documents the `manageOidcDynamicClient` entitlement for managing dynamic client registrations.Look at the attachment for additional entitlement
+- create and manage the AI agent in the Agent Registry;
+- create the OAuth client used by the agent;
+- update the agent lifecycle status when required; and
+- create or manage the Authorization Details Type if that step is automated.
 
-The exact entitlement needed for the Agent Registry API can vary with the Agent Registry capability exposed in your tenant/release. Do not copy an entitlement name from a different environment. Grant the minimum Agent Registry management entitlement exposed by your tenant.
+### Required entitlements
 
-Capture:
+Configure the API client with the following entitlements:
 
-```text
-ADMIN_CLIENT_ID=<admin API client ID>
-ADMIN_CLIENT_SECRET=<admin API client secret>
+| **Entitlement** | **Why it is required** |
+|---|---|
+| **Configure AI agents** | Required to create and update the Agent Registry record used by this sample. |
+| **Review and manage AI agent status** | Required to move the agent through the required lifecycle state, for example from `UNDER_REVIEW` to `ACTIVE`. |
+| **Manage OIDC dynamic clients** | Required to create the OAuth/OIDC client used by the agent through Dynamic Client Registration. |
+| **Manage Authorization Detail Types** | Required only if the Authorization Details Type used by this sample is created through the administrative API client. |
+
+
+Do not select unrelated administrative entitlements. They are not required by this sample.
+
+After creating the API client, record its client ID and client secret:
+
+```bash
+export VERIFY_ADMIN_CLIENT_ID="<admin-client-id>"
+export VERIFY_ADMIN_CLIENT_SECRET="<admin-client-secret>"
 ```
 
-![Administrative API client](images/uc1-01-admin-api-client.png)
 
 > IBM Verify administrative API client screenshot.
 
