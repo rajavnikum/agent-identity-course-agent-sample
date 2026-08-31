@@ -255,9 +255,10 @@ The sample payload uses:
 
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
-> Add the Agent Registry record screenshot as `images/uc1-03-agent-registry.png`.
+Associate the Actor Identity client to the onboarded Agent.
 
->  Please refer to Onboarding Agents to validate it is correctly onboarded.
+![Agent Actor Identity association](images/uc1-04-agent-actor-association.png)
+
 
 In Postman, continue the same setup collection:
 
