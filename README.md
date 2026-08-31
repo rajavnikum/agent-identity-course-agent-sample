@@ -326,7 +326,7 @@ A runtime request contains operation information similar to:
 ]
 ```
 
-Register the schema and configure the IBM Verify policy/criteria required by this usecase.
+Register the schema and configure the IBM Verify criteria .
 
 
 ## Step 6 — Configure the STS / Token Exchange client
