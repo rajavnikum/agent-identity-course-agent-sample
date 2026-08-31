@@ -117,7 +117,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"schemas\": [\n    \"urn:ietf:params:scim:schemas:core:ibm:2.0:Agent\"\n  ],\n  \"displayName\": \"UC1 Course Conversational Agent\",\n  \"description\": \"IBM Verify AI agent sample\",\n  \"oauthClients\": [\n    {\n      \"issuer\": \"{{ _.actor_client_reference }}\",\n      \"clientId\": \"{{ _.actor_client_id }}\",\n      \"purposes\": [\n        \"agent_id\",\n        \"authentication\"\n      ]\n    }\n  ],\n  \"permissions\": [],\n  \"status\": \"ACTIVE\",\n  \"tags\": [\n    \"course-agent\",\n    \"direct-tools\",\n    \"conversational-ai\"\n  ]\n}"
+        "text": "{\n  \"schemas\": [\n    \"urn:ietf:params:scim:schemas:core:ibm:2.0:Agent\"\n  ],\n  \"displayName\": \"UC1 Course Conversational Agent\",\n  \"description\": \"IBM Verify AI agent sample\",\n  \"oauthClients\": [\n    {\n      \"clientId\": \"{{ _.actor_client_id }}\",\n      \"purposes\": [\n        \"agent_id\",\n        \"authentication\"\n      ]\n    }\n  ],\n  \"permissions\": [],\n  \"tags\": [\n    \"course-agent\",\n    \"direct-tools\",\n    \"conversational-ai\"\n  ]\n}"
       },
       "parameters": [],
       "headers": [

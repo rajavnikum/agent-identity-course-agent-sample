@@ -165,8 +165,6 @@ export VERIFY_ADMIN_CLIENT_SECRET="<admin-client-secret>"
 ```
 
 
-> IBM Verify administrative API client screenshot.
-
 Obtain the setup token:
 
 ```bash
