@@ -303,6 +303,8 @@ SUBJECT_CLIENT_SECRET=<subject client secret, when required>
 
 ## Step 5 — Create the Authorization Details Type
 
+To know more visit Authorization Details Type :https://docs.verify.ibm.com/ibm-security-verify-access/docs/tasks-rar
+
 The application builds an authorization detail with the type:
 
 ```text
@@ -334,7 +336,7 @@ A runtime request contains operation information similar to:
 ]
 ```
 
-Register the schema and configure the IBM Verify policy/criteria required by your environment.
+Register the schema and configure the IBM Verify policy/criteria required by this usecase.
 
 
 
