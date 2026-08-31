@@ -32,15 +32,15 @@ The protected API needs to answer two separate questions:
 1. **Who is the human subject whose authority is being used?**
 2. **Which AI agent is acting?**
 
-This sample keeps those identities separate:
+This sample keeps the **human identity**, **agent identity**, and **delegated authorization** distinct:
 
-| Identity | Represented as | Obtained by |
+| **Concept** | **Represented as** | **Obtained by** |
 |---|---|---|
 | Human user | Subject | Authorization Code + PKCE |
 | Conversational AI agent | Actor | Client Credentials |
-| Final API authority | Delegated token | OAuth 2.0 Token Exchange |
+| Delegated API authorization | Delegated access token | OAuth 2.0 Token Exchange |
 
-The result is an API call that can be evaluated using both **subject context** and **actor context** instead of treating the agent as an anonymous middleware component.
+The resulting API call carries both **subject context** and **actor context**, allowing IBM Verify and the target API to evaluate **who the agent is acting on behalf of** and **which agent is performing the action**, rather than treating the agent as anonymous middleware.
 
 ## What the sample demonstrates
 
