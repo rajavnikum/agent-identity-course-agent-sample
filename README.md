@@ -293,6 +293,18 @@ Note:Change Access token format to "JWT" from "Default". Under Introspect , regi
 
 ## Step 5 — Create the Authorization Details Type
 
+The Authorization Details Type (ADT) defines the structured authorization context that the agent sends during token exchange.
+
+OAuth scopes such as course.read and course.enroll describe the general API permission being requested. The ADT adds the business-operation context needed by IBM Verify to evaluate the specific action the agent is attempting, for example:
+
+which action is being requested;
+which user is affected;
+which agent initiated the request;
+which target system and resource are involved; and
+which course is being accessed.
+
+This allows IBM Verify to make a more fine-grained authorization decision during token exchange instead of relying only on OAuth scopes.
+
 To know more on Authorization Details Type visit :https://docs.verify.ibm.com/ibm-security-verify-access/docs/tasks-rar
 
 The application builds an authorization detail with the type:
