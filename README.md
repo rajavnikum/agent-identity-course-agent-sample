@@ -255,17 +255,17 @@ The sample payload uses:
 
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
-Associate the Actor Identity client to the onboarded Agent.
+Associate the "Actor Identity client" to the onboarded Agent.
 
 ![Agent Actor Identity association](images/uc1-04-agent-actor-association.png)
 
 
 In Postman, continue the same setup collection:
-
-5. Set `actor_client_reference` for your tenant.
 6. Run **03 - Create Agent and Associate Actor Client**.
 7. The response stores `agent_id` when the response includes `id`.
 8. Run **04 - Get Agent Details** and verify `oauthClients` contains the actor client.
+
+For more info on onboarding ,please refer :https://www.ibm.com/docs/en/agent-identity?topic=tasks-onboarding-ai-agent
 
 ## Step 4 — Configure the human subject application
 
@@ -279,7 +279,6 @@ Required sample configuration:
 | PKCE | Required / S256 |
 | Redirect URI | `http://localhost:8000/callback` |
 | Scopes | `openid profile email course.read course.enroll` |
-| Client type | Match the security requirements of your deployment |
 
 Capture:
 
@@ -328,7 +327,6 @@ A runtime request contains operation information similar to:
 Register the schema and configure the IBM Verify policy/criteria required by this usecase.
 
 
-
 ## Step 6 — Configure the STS / Token Exchange client
 
 Create and IBM Verify application for token-exchange client for RFC 8693 token exchange.
@@ -343,7 +341,7 @@ actor_token          = agent access token
 actor_token_type     = urn:ietf:params:oauth:token-type:access_token
 scope                 = course.read course.enroll
 audience              = course-api
-authorization_details = operation-specific JSON
+authorization_details = urn:ibm:demo:verify:agent_action
 ```
 
 Configure the IBM Verify application to accept the subject and actor token types used by this sample and to issue the requested access-token type. Restrict allowed authorization detail types and apply the access policy/actor criteria appropriate for your environment.
@@ -397,7 +395,6 @@ AGENT_ADT_TYPE=urn:ibm:demo:verify:agent_action
 COURSE_API_AUDIENCE=course-api
 ```
 
-`VERIFY_MANAGEMENT_CLIENT_ID` and `VERIFY_MANAGEMENT_CLIENT_SECRET` are optional for the self-service tests. They are used only when the sample attempts to resolve another user's name through IBM Verify Directory.
 
 For the first successful run, use:
 
