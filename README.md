@@ -260,7 +260,7 @@ The sample payload uses:
   "schemas": [
     "urn:ietf:params:scim:schemas:core:ibm:2.0:Agent"
   ],
-  "displayName": "UC1 Course Conversational Agentsssdddddsss",
+  "displayName": "UC1 Course Conversational Agents",
   "description": "Conversational AI agent with direct protected course ssstools",
   "permissions": [],
   "tags": [
