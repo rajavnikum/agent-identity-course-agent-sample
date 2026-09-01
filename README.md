@@ -21,7 +21,7 @@ The Course API validates the delegated token and enforces audience, actor, scope
 
 ![Direct tool integration architecture](images/uc1-00-direct-tools-agent-flow.png)
 
-> Add the architecture PNG as `images/uc1-00-direct-tools-agent-flow.png`.
+
 
 ## Why this sample matters
 
