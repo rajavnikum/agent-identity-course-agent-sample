@@ -308,16 +308,30 @@ For more info on onboarding of Agents,please refer :https://www.ibm.com/docs/en/
 
 ## Step 4 — Configure the human subject application
 
-Create an OIDC application for the browser-facing chat application.
+Create an OpenID Connect application for the browser-facing chat application.
 
-Required sample configuration:
+This application authenticates the **human user** and obtains the subject access token that is later used during OAuth 2.0 Token Exchange.
 
-| Setting | Sample value |
-|---|---|
-| Grant | Authorization Code |
-| PKCE | Required / S256 |
-| Redirect URI | `http://localhost:8000/callback` |
-| Scopes | `openid profile email course.read course.enroll` |
+For consistency with the sample and screenshots, use:
+
+**Application name:** `UC1_subject_token`
+
+### General settings
+
+Complete the required application information, including the **Company name**.
+
+### Sign-on configuration
+
+Configure the application as follows:
+
+| Setting | Sample value | Why it is required |
+|---|---|---|
+| Grant type | Authorization Code | Authenticates the human user through the browser and returns an authorization code to the sample application. |
+| PKCE | Required | Protects the Authorization Code flow against interception of the authorization code. |
+| Redirect URI | `http://localhost:8000/callback` | Returns the browser to the sample application after successful authentication. |
+| Access token format | JWT | Allows the subject token to carry claims that IBM Verify can evaluate as part of the delegated token exchange flow. |
+| Scopes | `openid profile email course.read course.enroll` | Provides the user identity information and course permissions required by the sample. |
+
 
 Capture:
 
@@ -325,9 +339,26 @@ Capture:
 SUBJECT_CLIENT_ID=<subject client ID>
 SUBJECT_CLIENT_SECRET=<subject client secret, when required>
 ```
-Note:Change Access token format to "JWT" from "Default". Under Introspect , register the actor client id with may_act attribute
 
 ![Subject application configuration](images/uc1-05-subject-client.png)
+
+## Configure the actor relationship
+
+The subject token represents the signed-in human user. During token exchange, IBM Verify must also validate whether the agent represented by the actor token is permitted to act on behalf of that user.
+
+This sample uses the OAuth may_act relationship for this validation.
+
+Under the application's Introspect configuration, add a may_act attribute that identifies the agent OAuth client created in Step 2.
+
+Conceptually, the relationship is:
+{
+  "may_act": {
+    "client_id": "<actor-client-id>"
+  }
+}
+This allows IBM Verify to validate the relationship between the human subject and the agent actor during OAuth 2.0 Token Exchange.
+
+Save the application after completing the configuration.
 
 ## Step 5 — Create the Authorization Details Type
 
@@ -381,22 +412,57 @@ Register the schema and configure the IBM Verify criteria .
 
 ## Step 6 — Configure the STS / Token Exchange client
 
-Create and IBM Verify application for token-exchange client for RFC 8693 token exchange.
+Create an IBM Verify application for OAuth 2.0 Token Exchange as defined by RFC 8693.
 
-The sample sends:
+The Token Exchange application is used to authenticate the request to IBM Verify's Security Token Service (STS). It is separate from the agent OAuth application created in Step 2:
+
+- the **agent OAuth application** authenticates the AI agent and obtains the `actor_token`;
+- the **Token Exchange application** authenticates the application making the token-exchange request to IBM Verify;
+- the **subject token** represents the signed-in human user;
+- the resulting **delegated access token** represents the authority granted for the protected Course API call.
+
+### Token Exchange configuration
+
+Configure the application with the following values:
+
+| Setting | Sample value | Why it is required |
+|---|---|---|
+| Grant type | OAuth 2.0 Token Exchange | Enables RFC 8693 token exchange. |
+| Subject token type | `urn:ietf:params:oauth:token-type:access_token` | The human user's access token is supplied as the subject token. |
+| Actor token type | `urn:ietf:params:oauth:token-type:access_token` | The agent access token is supplied as the actor token. |
+| Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |
+| Audience | `course-api` | Binds the delegated token to the protected Course API. |
+| Authorization Details Type | `urn:ibm:demo:verify:agent_action` | Allows IBM Verify to evaluate the business operation described in Step 5. |
+| Scopes | `course.read course.enroll` | Defines the course authorities used by the current sample. |
+| Access token format | JWT | Allows the sample Course API to validate the delegated token claims used by the demonstration. |
+
+### Delegation validation
+
+The token exchange combines two identity contexts:
+
+- `subject_token` — the signed-in human user;
+- `actor_token` — the AI agent acting on behalf of that user.
+
+IBM Verify validates the actor relationship using the `may_act` configuration established for the subject application in Step 4.
+
+This prevents an arbitrary OAuth client from presenting a user's subject token and acting as the delegated agent.
+
+The Authorization Details Type configured in Step 5 provides the additional operation context used during the authorization decision.
+
+### Token Exchange request
+
+At runtime, the sample sends a request containing:
 
 ```text
-grant_type          = urn:ietf:params:oauth:grant-type:token-exchange
-subject_token        = human access token
+grant_type           = urn:ietf:params:oauth:grant-type:token-exchange
+subject_token        = <human access token>
 subject_token_type   = urn:ietf:params:oauth:token-type:access_token
-actor_token          = agent access token
+actor_token          = <agent access token>
 actor_token_type     = urn:ietf:params:oauth:token-type:access_token
-scope                 = course.read course.enroll
-audience              = course-api
+requested_token_type = urn:ietf:params:oauth:token-type:access_token
+scope                = course.read course.enroll
+audience             = course-api
 authorization_details = urn:ibm:demo:verify:agent_action
-```
-
-Configure the IBM Verify application to accept the subject and actor token types used by this sample and to issue the requested access-token type. Restrict allowed authorization detail types and apply the access policy/actor criteria appropriate for your environment.
 
 Capture:
 
