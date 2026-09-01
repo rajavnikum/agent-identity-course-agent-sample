@@ -193,7 +193,7 @@ curl --request POST "https://<tenant>/oauth2/register" \
 ```
 > Creating the client through DCR also creates an application that can be viewed and managed in the IBM Verify administration console.
 
-The supplied payload creates a client intended for the agent runtime and requests the Client Credentials grant. Review the scopes and tenant policy before using it outside the sample.
+The supplied DCR payload creates the OAuth application required by this sample with the Client Credentials grant and the agent.run scope.
 
 Capture the returned:
 
@@ -201,7 +201,21 @@ Capture the returned:
 ACTOR_CLIENT_ID=<client_id>
 ACTOR_CLIENT_SECRET=<client_secret>
 ```
-Note:Change Access token format to "JWT" from "Default"
+These credentials belong to the agent's OAuth application and are used only to obtain the actor token at runtime.
+
+## Verify the application in IBM Verify
+
+After DCR completes:
+
+1. Open the IBM Verify administration console.
+2. Go to Applications.
+3. Locate the application created by the DCR request.(For this sample use :UC1 Course Conversational Agent)
+4. Open the application and verify that Client Credentials is enabled and that the expected agent.run scope is configured.
+5. Set the access token format to JWT
+6. Save the application after making the change.
+
+The sample requires a JWT actor token because the token is subsequently supplied to IBM Verify as the actor_token during OAuth 2.0 Token Exchange.
+
 ### Postman
 
 1. Import `api-clients/postman/uc1-ibm-verify-setup.postman_collection.json`.
@@ -242,17 +256,18 @@ The sample payload uses:
 
 ```json
 {
-  "displayName": "Course Booking Conversational Agent",
-  "description": "Conversational AI agent that invokes protected course tools",
-  "oauthClients": [
-    {
-      
-      "clientId": "${ACTOR_CLIENT_ID}",
-      "purposes": ["agent_id", "authentication"]
-    }
-  ],
   
-  "tags": ["course-agent", "direct-tools", "conversational-ai"]
+  "schemas": [
+    "urn:ietf:params:scim:schemas:core:ibm:2.0:Agent"
+  ],
+  "displayName": "UC1 Course Conversational Agentsssdddddsss",
+  "description": "Conversational AI agent with direct protected course ssstools",
+  "permissions": [],
+  "tags": [
+    "course-agent",
+    "direct-tools",
+    "conversational-ai"
+  ]
 }
 ```
 
