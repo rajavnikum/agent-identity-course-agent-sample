@@ -25,7 +25,7 @@ IBM Verify evaluates the delegation and authorization context before issuing the
 
 Enterprise AI agents increasingly call APIs that read or change data on behalf of a person. A course agent may enroll a user, an HR agent may update employee information, or a finance agent may initiate a transaction. In these scenarios, identifying only the calling application is not sufficient.
 
-The authorization decision needs to distinguish::
+The authorization decision needs to distinguish:
 
 1. **Who is the human subject whose authority is being used?**
 2. **Which AI agent is performing the action?**
@@ -36,7 +36,7 @@ This sample keeps the **human identity**, **agent identity**, and **delegated au
 | **Concept** | **Represented as** | **Obtained by** |
 |---|---|---|
 | Human user | Subject | Authorization Code + PKCE |
-| Conversational AI agent | Actor | Client Credentials |
+| AI agent | Registered Agent identity associated with its OAuth application | Actor token obtained using Client Credentials |
 | Delegated API authorization | Delegated access token | OAuth 2.0 Token Exchange |
 
 The resulting API call carries both **subject context** and **actor context**, allowing IBM Verify and the target API to evaluate **who the agent is acting on behalf of** and **which agent is performing the action**, rather than treating the agent as anonymous middleware.
@@ -143,7 +143,7 @@ Create an IBM Verify API client with only the entitlements required to configure
 The administrative API client is used by the setup scripts to:
 
 - create the Agent Registry record; 
-- authorize Dynamic Client Registration (DCR) when creating the agent's OAuth application.;
+- authorize Dynamic Client Registration (DCR) when creating the agent's OAuth application.
 
 
 ### Required entitlements
@@ -203,13 +203,13 @@ ACTOR_CLIENT_SECRET=<client_secret>
 ```
 These credentials belong to the agent's OAuth application and are used only to obtain the actor token at runtime.
 
-## Verify the application in IBM Verify
+### Verify the application in IBM Verify
 
 After DCR completes:
 
 1. Open the IBM Verify administration console.
 2. Go to Applications.
-3. Locate the application created by the DCR request.(For this sample use :UC1 Course Conversational Agent)
+3. 3. Locate the application created by the DCR request. The supplied DCR payload creates it with the name `UC1 Course Conversational Agent`.
 4. Open the application and verify that Client Credentials is enabled and that the expected agent.run scope is configured.
 5. Set the access token format to JWT
 6. Save the application after making the change.
@@ -374,7 +374,7 @@ which course is being accessed.
 
 This allows IBM Verify to make a more fine-grained authorization decision during token exchange instead of relying only on OAuth scopes.
 
-To know more on Authorization Details Type visit :https://docs.verify.ibm.com/ibm-security-verify-access/docs/tasks-rar
+To learn more about Authorization Details Types, see the IBM Verify documentation: https://docs.verify.ibm.com/ibm-security-verify-access/docs/tasks-rar
 
 The application builds an authorization detail with the type:
 
@@ -470,9 +470,8 @@ Capture:
 STS_CLIENT_ID=<STS client ID>
 STS_CLIENT_SECRET=<STS client secret>
 ```
-Note:Change Access token format to "JWT" from "Default"
 
-> Note : The client ID of the Token Exchange application needs to placed as STS_CLIENT_ID and respective SECRET
+> Note : The client ID of the Token Exchange application needs to placed as STS_CLIENT_ID and respective SECRET in environment file
 
 ## Step 7 — Configure the application
 
