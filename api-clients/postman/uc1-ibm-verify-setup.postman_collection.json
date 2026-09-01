@@ -186,7 +186,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"schemas\": [\n    \"urn:ietf:params:scim:schemas:core:ibm:2.0:Agent\"\n  ],\n  \"displayName\": \"UC1 Course Conversational Agent\",\n  \"description\": \"Conversational AI agent with direct protected course tools\",\n  \"oauthClients\": [\n    {\n      \"clientId\": \"{{actor_client_id}}\",\n      \"purposes\": [\n        \"agent_id\",\n        \"authentication\"\n      ]\n    }\n  ],\n  \"permissions\": [],\n  \"tags\": [\n    \"course-agent\",\n    \"direct-tools\",\n    \"conversational-ai\"\n  ]\n}",
+          "raw": "{\n  \"schemas\": [\n    \"urn:ietf:params:scim:schemas:core:ibm:2.0:Agent\"\n  ],\n  \"displayName\": \"UC1 Course Conversational Agent\",\n  \"description\": \"Conversational AI agent with direct protected course tools\",\n  \"permissions\": [],\n  \"tags\": [\n    \"course-agent\",\n    \"direct-tools\",\n    \"conversational-ai\"\n  ]\n}",
           "options": {
             "raw": {
               "language": "json"

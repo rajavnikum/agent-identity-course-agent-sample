@@ -4,18 +4,7 @@
   ],
   "displayName": "UC1 Course Conversational Agent",
   "description": "Conversational AI agent that invokes protected course tools",
-  "oauthClients": [
-    {
-      "issuer": "${ACTOR_CLIENT_REFERENCE}",
-      "clientId": "${ACTOR_CLIENT_ID}",
-      "purposes": [
-        "agent_id",
-        "authentication"
-      ]
-    }
-  ],
   "permissions": [],
-  "status": "ACTIVE",
   "tags": [
     "course-agent",
     "direct-tools",
