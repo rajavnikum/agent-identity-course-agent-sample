@@ -12,25 +12,24 @@ The example is a course assistant. A user signs in and asks natural-language que
 Show me the available courses.
 Enroll me in Advanced Security Operations.
 Show my enrolled courses.
-Show Rick's enrolled courses.
 ```
 
-The AI model decides the requested action. The agent does **not** receive authority simply because the model selected a tool. Before the protected course operation runs, the application obtains the user's subject token, obtains the agent's actor token, constructs authorization details for the requested operation, and asks IBM Verify to issue a delegated access token through OAuth 2.0 Token Exchange.
+The AI model selects the tool and requested operation, but that selection does not grant the agent authority to perform it. Before a protected course operation is executed, the application uses the user's subject token, obtains an actor token representing the agent, constructs the authorization details describing the requested operation, and requests a delegated access token from IBM Verify through OAuth 2.0 Token Exchange.
 
-The Course API validates the delegated token and enforces audience, actor, scope, authorization details, and the sample's self-service policy.
+IBM Verify evaluates the delegation and authorization context before issuing the delegated token. The Course API then validates the delegated token and enforces the required audience, scope, actor and subject context, authorization details, and the sample's self-service policy before allowing the operation.
 
 ![Direct tool integration architecture](images/uc1-00-direct-tools-agent-flow.png)
 
 
-
 ## Why this sample matters
 
-Enterprise agents increasingly call APIs that read or change data for a person. A course agent may enroll a user, an HR agent may update employee information, or a finance agent may create a transaction. In these cases, identifying only the application is not sufficient.
+Enterprise AI agents increasingly call APIs that read or change data on behalf of a person. A course agent may enroll a user, an HR agent may update employee information, or a finance agent may initiate a transaction. In these scenarios, identifying only the calling application is not sufficient.
 
-The protected API needs to answer two separate questions:
+The authorization decision needs to distinguish::
 
 1. **Who is the human subject whose authority is being used?**
-2. **Which AI agent is acting?**
+2. **Which AI agent is performing the action?**
+3. **What has that agent been delegated authority to do?**
 
 This sample keeps the **human identity**, **agent identity**, and **delegated authorization** distinct:
 
@@ -130,7 +129,7 @@ The resulting API call carries both **subject context** and **actor context**, a
 ## Prerequisites
 
 - Python 3.10 or later.
-- An IBM Verify tenant with the OAuth/OIDC capabilities used by the sample.
+- An IBM Verify tenant with the OAuth/OIDC capabilities.
 - Permission to create or manage dynamic OAuth clients.
 - IBM Verify Agent Registry capability/API available in the target environment.
 - Permission to create/register an agent and associate an OAuth client.
