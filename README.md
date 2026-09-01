@@ -342,7 +342,7 @@ SUBJECT_CLIENT_SECRET=<subject client secret, when required>
 
 ![Subject application configuration](images/uc1-05-subject-client.png)
 
-## Configure the actor relationship
+### Configure the actor relationship
 
 The subject token represents the signed-in human user. During token exchange, IBM Verify must also validate whether the agent represented by the actor token is permitted to act on behalf of that user.
 
