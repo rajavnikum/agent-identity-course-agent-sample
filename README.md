@@ -235,7 +235,9 @@ The sample requires a JWT actor token because the token is subsequently supplied
 
 ## Step 3 — Onboard the conversational agent and associate the actor client
 
-The OAuth client authenticates the runtime. The Agent Registry record represents the **governed AI agent**.
+The OAuth application created in Step 2 provides the runtime credentials used by the conversational agent to obtain an actor token.
+
+The Agent Registry record represents the **governed identity of the AI agent** in IBM Verify. Keeping the Agent identity separate from the OAuth application allows the agent to be managed as an identity while its runtime credentials and application association are managed independently.
 
 Create the agent and include the actor client in `oauthClients`:
 
