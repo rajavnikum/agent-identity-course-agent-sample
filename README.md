@@ -142,8 +142,9 @@ Create an IBM Verify API client with only the entitlements required to configure
 
 The administrative API client is used by the setup scripts to:
 
-- create and manage the AI agent in the Agent Registry;
-- create the OAuth client used by the agent;
+- create the Agent Registry record; 
+- authorize Dynamic Client Registration (DCR) when creating the agent's OAuth application.;
+
 
 ### Required entitlements
 
@@ -178,7 +179,9 @@ Save the returned `access_token` as `ADMIN_ACCESS_TOKEN`.
 
 ## Step 2 — Create the agent OAuth client using DCR
 
-DCR is the preferred application/client creation path for this sample.
+This sample uses Dynamic Client Registration (DCR) to create the OAuth application used by the agent at runtime.
+
+The application is configured for the Client Credentials grant. The resulting client ID and client secret are used by the running agent to obtain its actor token.
 
 Using cURL:
 
@@ -188,6 +191,7 @@ curl --request POST "https://<tenant>/oauth2/register" \
   --header "Content-Type: application/json" \
   --data @curl/payloads/actor-client-dcr.json
 ```
+> Creating the client through DCR also creates an application that can be viewed and managed in the IBM Verify administration console.
 
 The supplied payload creates a client intended for the agent runtime and requests the Client Credentials grant. Review the scopes and tenant policy before using it outside the sample.
 
