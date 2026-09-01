@@ -239,8 +239,17 @@ The OAuth application created in Step 2 provides the runtime credentials used by
 
 The Agent Registry record represents the **governed identity of the AI agent** in IBM Verify. Keeping the Agent identity separate from the OAuth application allows the agent to be managed as an identity while its runtime credentials and application association are managed independently.
 
-Create the agent and include the actor client in `oauthClients`:
+## Onboard the agent
 
+Create a new Agent in IBM Verify with the following values:
+
+Display name: UC1 Course Conversational Agent
+Description: Conversational AI agent that invokes protected course tools
+Tags: course-agent, direct-tools, conversational-ai
+
+After creating the Agent, record the generated Agent ID.
+
+Use below curl for Agent creation: 
 ```bash
 export TENANT_URL="https://<tenant>"
 export ADMIN_ACCESS_TOKEN="<admin-access-token>"
@@ -275,7 +284,16 @@ The sample payload uses:
 
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
-Associate the "Actor Identity client" to the onboarded Agent.
+## Associate the OAuth application
+
+After the Agent has been created:
+
+1. Open the Agent in the IBM Verify administration console.
+2. Edit the Agent.
+3. Go to Identity & authentication.
+4. Select the OAuth application created in Step 2: UC1 Course Conversational Agent.
+5. Continue through the configuration and save the Agent.
+6. Reopen the Agent and verify that the OAuth application is shown under its identity and authentication configuration.
 
 ![Agent Actor Identity association](images/uc1-04-agent-actor-association.png)
 
