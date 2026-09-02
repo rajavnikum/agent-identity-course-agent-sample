@@ -348,18 +348,18 @@ curl --request GET "$TENANT/v1.0/Agents" \
 
 ### Postman
 
-*. Run **03 - Onboard Agent**<br>
-*. Run **04 - Get Agent Details**.
+* Run **03 - Onboard Agent**<br>
+* Run **04 - Get Agent Details**.
 
 ### Insomnia
 
-*. Run **03 - Onboard Agent**.<br>
-*. Run **04 - Get Agent Details**.
+* Run **03 - Onboard Agent**.<br>
+* Run **04 - Get Agent Details**.
 
 ### UI 
-*. Go to Admin Console,Under **Identities** <br>
-*. Click AI agents
-*. Create Agent
+* Go to Admin Console,Under **Identities** <br>
+* Click AI agents
+* Create Agent
 
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
@@ -382,13 +382,13 @@ curl --request PUT "$TENANT/oauth2/register/$ACTOR_CLIENT_ID" \
 
 ### Postman
 
-*. Make sure you have ACTOR_CLIENT_ID and AGENT_ID set in environment<br>
-*. Run **05 - 05 - DCR - Associate Actor Client with Agent**.
+* Make sure you have ACTOR_CLIENT_ID and AGENT_ID set in environment<br>
+* Run **05 - 05 - DCR - Associate Actor Client with Agent**.
 
 ### Insomnia
 
-*. Make sure you have ACTOR_CLIENT_ID and AGENT_ID set in environment<br>
-*. Run **05 - 05 - DCR - Associate Actor Client with Agent**.
+* Make sure you have ACTOR_CLIENT_ID and AGENT_ID set in environment<br>
+* Run **05 - 05 - DCR - Associate Actor Client with Agent**.
 
 
 From UI,to associate the OAuth application after the Agent has been created perform the below steps:
