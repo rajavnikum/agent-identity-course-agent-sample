@@ -539,7 +539,6 @@ Applications → Authorization detail types
 
    ```text
    urn:ibm:demo:verify:agent_action
-
 6. In Schema, paste the contents of:
 
    payloads/agent_action_adt_schema.json
@@ -549,7 +548,6 @@ Applications → Authorization detail types
     ```text
      $OIDC_AUTHDETAIL_LABEL_STDTITLE$<br/>
     $OIDC_AUTHDETAIL_LABEL_STDID$ {ad.identifier}
-
 9.   Click Create
 
 
