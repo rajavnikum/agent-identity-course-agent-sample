@@ -84,7 +84,28 @@ The resulting API call carries both **subject context** and **actor context**, a
                  | policy checks    |
                  +------------------+
 ```
-
+Human User       Course Agent Application       IBM Verify       Course API
+    |                       |                        |                 |
+1.  |--- Open chat -------->|                        |                 |
+2.  |--- Login ------------>|                        |                 |
+3.  |                       |--- Authorize --------->|                 |
+4.  |<---------------- Human authentication --------|                 |
+5.  |                       |<-- Subject token ------|                 |
+6.  |--- Course request --->|                        |                 |
+7.  |                       | Select agent action    |                 |
+8.  |                       | Resolve target/context |                 |
+9.  |                       | Build auth details     |                 |
+10. |                       |--- Client Credentials ->|                |
+    |                       |<-- Actor token --------|                 |
+11. |                       |--- Token Exchange ---->|                 |
+    |                       |    subject token       |                 |
+    |                       |    actor token         |                 |
+    |                       |    auth details        |                 |
+12. |                       |<-- Delegated token ----|                 |
+13. |                       |----------------------------------------->|
+    |                       |               Delegated token            |
+14. |                       |                        |    Validate      |
+15. |<---------------------- Course result ---------------------------| 
 ### Runtime flow
 
 1. The user opens the chat application.
