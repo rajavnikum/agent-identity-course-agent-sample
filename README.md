@@ -257,11 +257,11 @@ curl --request POST "$TENANT/oauth2/register" \
 
 The supplied DCR payload creates the OAuth application required by this sample with the Client Credentials grant and the agent.run scope.
 
-Capture the returned:
+From the response, record:
 
-```text
-ACTOR_CLIENT_ID=<client_id>
-ACTOR_CLIENT_SECRET=<client_secret>
+```bash
+export ACTOR_CLIENT_ID="<client-id>"
+export ACTOR_CLIENT_SECRET="<client-secret>"
 ```
 These credentials belong to the agent's OAuth application and are used only to obtain the actor token at runtime.
 
