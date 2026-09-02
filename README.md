@@ -115,21 +115,47 @@ The following sequence shows which logical entity performs each operation. The s
 
 ### Runtime flow
 
-1. The user opens the chat application.
-2. The user selects **Login with IBM Verify**.
-3. `verify_oauth.py` creates a PKCE verifier/challenge and redirects the browser to IBM Verify.
-4. IBM Verify authenticates the human and returns an authorization code.
-5. The application exchanges the code for the **subject access token**.
-6. The user enters a natural-language request.
-7. `llm_agent.py` classifies the request into one of the supported course actions.
-8. The application resolves the requested target user.
-9. `rar_builder.py` builds operation-specific authorization details.
-10. The agent obtains its **actor access token** using Client Credentials.
-11. The application sends the subject token, actor token, requested scope, audience, and authorization details to IBM Verify Token Exchange.
-12. IBM Verify evaluates the exchange configuration and issues or denies a delegated token.
-13. `course_api.py` receives the delegated token and validates the resource-side security conditions.
-14. Only after validation passes does the course operation execute.
-15. The diagnostic response shows the subject, actor, delegated-token claims, authorization details, and API decision for demonstration purposes.
+The numbered steps below correspond directly to the **Runtime sequence** diagram above.
+
+1. The **Human User** opens the **Course Agent Application**.
+
+2. The **Human User** selects **Login with IBM Verify**.
+
+3. The **Course Agent Application** starts the Authorization Code flow with PKCE and redirects the browser to **IBM Verify**.
+
+4. The **Human User** authenticates with **IBM Verify** and completes the sign-in process.
+
+5. **IBM Verify** redirects the browser back to the **Course Agent Application** with an authorization code.
+
+6. The **Course Agent Application** exchanges the authorization code and PKCE verifier with **IBM Verify**.
+
+7. **IBM Verify** returns the human user's **subject access token** to the **Course Agent Application**.
+
+8. The **Human User** submits a natural-language course request to the **Course Agent Application**.
+
+9. The **Course Agent Application** maps the request to one of the allow-listed course actions.
+
+10. The **Course Agent Application** resolves the target user and other context required for the requested operation.
+
+11. The **Course Agent Application** constructs the operation-specific `authorization_details` that describe what the agent is requesting to do.
+
+12. The **Course Agent Application** requests an **actor access token** from **IBM Verify** using the credentials of the Agent OAuth application associated with the registered Agent identity.
+
+13. **IBM Verify** authenticates the Agent OAuth application and returns the **actor access token** to the **Course Agent Application**.
+
+14. The **Course Agent Application** sends an OAuth 2.0 Token Exchange request to **IBM Verify** containing the subject token, actor token, requested scope, audience, and `authorization_details`.
+
+15. **IBM Verify** evaluates the subject, actor, delegation relationship, requested authorization context, and Token Exchange configuration. If the request is allowed, IBM Verify returns a **delegated access token**.
+
+16. The **Course Agent Application** calls the protected **Course API** using the delegated access token.
+
+17. The **Course API** validates the delegated authorization, including the expected audience, required scope, actor and subject context, and authorization details. If validation succeeds, the Course API executes the requested course operation.
+
+18. The **Course API** returns the result to the **Course Agent Application**.
+
+19. The **Course Agent Application** presents the result to the **Human User**.
+
+
 
 ## Project structure
 
