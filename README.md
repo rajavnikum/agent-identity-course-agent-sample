@@ -296,6 +296,34 @@ The OAuth application created in Step 2 provides the runtime credentials used by
 
 The Agent Registry record represents the **governed identity of the AI agent** in IBM Verify. Keeping the Agent identity separate from the OAuth application allows the agent to be managed as an identity while its runtime credentials and application association are managed independently.
 
+### Why the Agent Registry record matters
+
+The Agent Registry record gives the AI agent a **stable governed identity** that is separate from individual OAuth credentials.
+
+The Agent OAuth application created in Step 2 provides the runtime credentials used by the Course Agent Application. By associating that OAuth application with the Agent Registry record, IBM Verify can relate the runtime OAuth identity back to the governed Agent identity.
+
+This association is important for operational governance and audit because OAuth client credentials can be rotated or replaced while the Agent identity remains stable. The Agent Registry therefore provides a durable identity and correlation point for tracking which governed agent is associated with runtime activity.
+
+Conceptually:
+
+```text
+Agent Registry record
+        |
+        | Agent ID = stable governed identity
+        |
+        +------ associated with ------+
+                                   |
+                                   v
+                         Agent OAuth application
+                                   |
+                                   | client credentials
+                                   v
+                             Actor access token
+                                   |
+                                   v
+                       Token Exchange / runtime activity
+```
+
 ## Onboard the agent
 
 Create a new Agent in IBM Verify with the following values:
