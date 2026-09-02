@@ -260,20 +260,20 @@ curl --request POST "$TENANT/oauth2/register" \
 
 ### Postman
 
-1. Import `api-clients/postman/uc1-ibm-verify-setup.postman_collection.json`.
-2. Set `tenant_url`, `admin_client_id`, and `admin_client_secret`.
-3. Run **01 - Get Admin Access Token**.
-4. Run **02 - DCR - Create Actor Client**.
-5. The collection stores `actor_client_id` and `actor_client_secret` from the response.
+*. Import `api-clients/postman/uc1-ibm-verify-setup.postman_collection.json`.
+*. Set `tenant_url`, `admin_client_id`, and `admin_client_secret`.
+*. Run **01 - Get Admin Access Token**.
+*. Run **02 - DCR - Create Actor Client**.
+*. The collection stores `actor_client_id` and `actor_client_secret` from the response.
 
 ### Insomnia
 
-1. Import `api-clients/insomnia/uc1-ibm-verify-setup.insomnia.json`.
-2. Edit the base environment.
-3. Run **01 Get Admin Access Token**.
-4. Copy the access token to `admin_access_token`.
-5. Run **02 DCR Create Actor Client**.
-6. Copy the returned client ID and secret into the environment.
+*. Import `api-clients/insomnia/uc1-ibm-verify-setup.insomnia.json`.
+*. Edit the base environment.
+*. Run **01 Get Admin Access Token**.
+*. Copy the access token to `admin_access_token`.
+*. Run **02 DCR Create Actor Client**.
+*. Copy the returned client ID and secret into the environment.
 
 
 > Creating the client through DCR also creates an application that can be viewed and managed in the IBM Verify administration console.
@@ -345,15 +345,15 @@ curl --request GET "$TENANT/v1.0/Agents" \
   --header "Content-Type: application/scim+json"   
 ```
 ### Postman
-6. Run **03 - Onboard Agent**
-6. Run **04 - Get Agent Details**.
+*. Run **03 - Onboard Agent**
+*. Run **04 - Get Agent Details**.
 
 ### Insomnia
 
-7. Run **03 - Onboard Agent**..
-8. Run **04 - Get Agent Details**.
+*. Run **03 - Onboard Agent**..
+*. Run **04 - Get Agent Details**.
 
-via,ui one can check too .
+via,ui one can create and validate created agents.
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
 ## Associate the OAuth application
