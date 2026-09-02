@@ -334,12 +334,30 @@ The sample payload uses:
   ]
 }
 ```
+#### Postman or Insomnia
+
+--> Run **03 - Onboard Agent**.
+
+### Validate Agents Created 
+
+```
+curl --request GET "$TENANT/v1.0/Agents" \
+  --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
+  --header "Accept: application/scim+json" \
+  --header "Content-Type: application/scim+json"   
+```
+#### Postman or Insomnia
+
+--> Run **04 - Get Agent Details**.
+
+3. Run **03 - Onboard Agent**.
 
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
 ## Associate the OAuth application
 
-After the Agent has been created:
+
+After the Agent has been created
 
 1. Open the Agent in the IBM Verify administration console.
 2. Edit the Agent.
