@@ -86,46 +86,7 @@ The resulting API call carries both **subject context** and **actor context**, a
 ```
 The following sequence shows which logical entity performs each operation. The step numbers correspond directly to the **Runtime flow** described below.
 
-```mermaid
-sequenceDiagram
-    autonumber
 
-    actor User as Human User
-    participant Agent as Course Agent Application
-    participant Verify as IBM Verify
-    participant API as Course API
-
-    User->>Agent: 1. Open the chat application
-    User->>Agent: 2. Select "Login with IBM Verify"
-
-    Agent->>Verify: 3. Start Authorization Code + PKCE flow
-    Verify->>User: 4. Authenticate the human user
-    Verify-->>Agent: 5. Return authorization code and issue subject token
-
-    User->>Agent: 6. Submit a natural-language course request
-
-    Note over Agent: 7. Select an allow-listed course action
-    Note over Agent: 8. Resolve the requested target user
-    Note over Agent: 9. Build authorization_details for the requested operation
-
-    Agent->>Verify: 10. Request actor token using Agent OAuth application credentials
-    Verify-->>Agent: Actor access token
-
-    Agent->>Verify: 11. Request OAuth 2.0 Token Exchange<br/>subject_token + actor_token + scope + audience + authorization_details
-
-    Note over Verify: 12. Evaluate subject, actor,<br/>delegation and authorization context
-
-    Verify-->>Agent: Delegated access token
-
-    Agent->>API: 13. Call protected course operation<br/>using delegated access token
-
-    Note over API: 14. Validate audience, scope,<br/>actor/subject context and authorization_details
-
-    Note over API: 15. Execute the course operation only if validation succeeds
-
-    API-->>Agent: Course operation result
-    Agent-->>User: Display result
-    
 ### Runtime flow
 
 1. The user opens the chat application.
