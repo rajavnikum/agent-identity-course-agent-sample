@@ -108,7 +108,7 @@ The **Course Agent Application** is the runtime component that performs the OAut
 The runtime sequence below uses these same entity names consistently.
 The following sequence shows which logical entity performs each operation. The step numbers correspond directly to the **Runtime flow** described below.
 
-## WebSeqeunce
+## FLow Diagram
  
  ![Flow architecture](images/websequence.png)
 
