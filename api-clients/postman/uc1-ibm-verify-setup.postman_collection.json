@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "d6d5c67c-0f22-45a4-abb7-c3f812f1e4b0",
+    "_postman_id": "2340ac43-e679-4f7b-b55b-71138d98a413",
     "name": "UC1 IBM Verify Setup - DCR, Agent Association, Actor Token",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "56609434",
-    "_collection_link": "https://go.postman.co/collection/56609434-d6d5c67c-0f22-45a4-abb7-c3f812f1e4b0?source=collection_link"
+    "_exporter_id": "56129598",
+    "_collection_link": "https://go.postman.co/collection/56129598-2340ac43-e679-4f7b-b55b-71138d98a413?source=collection_link"
   },
   "item": [
     {
@@ -33,25 +33,22 @@
           "urlencoded": [
             {
               "key": "grant_type",
-              "value": "client_credentials",
-              "type": "text"
+              "value": "client_credentials"
             },
             {
               "key": "client_id",
-              "value": "{{admin_client_id}}",
-              "type": "text"
+              "value": "{{VERIFY_ADMIN_CLIENT_ID}}"
             },
             {
               "key": "client_secret",
-              "value": "{{admin_client_secret}}",
-              "type": "text"
+              "value": "{{VERIFY_ADMIN_CLIENT_SECRET}}"
             }
           ]
         },
         "url": {
-          "raw": "{{tenant_url}}/oauth2/token",
+          "raw": "{{TENANT}}/oauth2/token",
           "host": [
-            "{{tenant_url}}"
+            "{{TENANT}}"
           ],
           "path": [
             "oauth2",
@@ -67,10 +64,12 @@
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
             "exec": [
               "const j=pm.response.json(); if (j.client_id) pm.collectionVariables.set(\"actor_client_id\", j.client_id); if (j.client_secret) pm.collectionVariables.set(\"actor_client_secret\", j.client_secret);"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -79,7 +78,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{admin_access_token}}"
+            "value": "Bearer {{ADMIN_ACCESS_TOKEN}}"
           },
           {
             "key": "Content-Type",
@@ -96,9 +95,9 @@
           }
         },
         "url": {
-          "raw": "{{tenant_url}}/oauth2/register",
+          "raw": "{{TENANT}}/oauth2/register",
           "host": [
-            "{{tenant_url}}"
+            "{{TENANT}}"
           ],
           "path": [
             "oauth2",
@@ -109,62 +108,17 @@
       "response": []
     },
     {
-      "name": "02 - DCR - Update Actor Client",
+      "name": "03 - Onboard Agent",
       "event": [
         {
           "listen": "test",
           "script": {
-            "type": "text/javascript",
-            "exec": [
-              "const j=pm.response.json(); if (j.client_id) pm.collectionVariables.set(\"actor_client_id\", j.client_id); if (j.client_secret) pm.collectionVariables.set(\"actor_client_secret\", j.client_secret);"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{admin_access_token}}"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"client_name\": \"UC1 Course Conversational Agent\",\n  \"grant_types\": [\n    \"client_credentials\"\n  ],\n  \"scope\": \"agent.run\",\n  \"token_endpoint_auth_method\": \"client_secret_post\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{tenant_url}}/oauth2/register",
-          "host": [
-            "{{tenant_url}}"
-          ],
-          "path": [
-            "oauth2",
-            "register"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "03 - Create Agent and Associate Actor Client",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
             "exec": [
               "const j=pm.response.json(); if (j.id) pm.collectionVariables.set(\"agent_id\", j.id);"
-            ]
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
           }
         }
       ],
@@ -194,9 +148,9 @@
           }
         },
         "url": {
-          "raw": "{{tenant_url}}/v1.0/Agents",
+          "raw": "{{TENANT}}/v1.0/Agents",
           "host": [
-            "{{tenant_url}}"
+            "{{TENANT}}"
           ],
           "path": [
             "v1.0",
@@ -213,7 +167,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{admin_access_token}}"
+            "value": "Bearer {{ADMIN_ACCESS_TOKEN}}"
           },
           {
             "key": "Accept",
@@ -221,14 +175,117 @@
           }
         ],
         "url": {
-          "raw": "{{tenant_url}}/v1.0/Agents/{{agent_id}}",
+          "raw": "{{TENANT}}/v1.0/Agents",
           "host": [
-            "{{tenant_url}}"
+            "{{TENANT}}"
+          ],
+          "path": [
+            "v1.0",
+            "Agents"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "05 - DCR - Associate Actor Client with Agent",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const j=pm.response.json(); if (j.client_id) pm.collectionVariables.set(\"actor_client_id\", j.client_id); if (j.client_secret) pm.collectionVariables.set(\"actor_client_secret\", j.client_secret);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_access_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"client_name\": \"UC1 Course Conversational Agent\",\n  \"grant_types\": [\n    \"client_credentials\"\n  ],\n  \"extension\": {\n    \"entity_id\": \"{{agent_id}}\",\n    \"entity_type\": \"agent\"\n  },\n  \"scope\": \"agent.run\",\n  \"token_endpoint_auth_method\": \"client_secret_post\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{TENANT}}/oauth2/register/{{ACTOR_CLIENT_ID}}",
+          "host": [
+            "{{TENANT}}"
+          ],
+          "path": [
+            "oauth2",
+            "register",
+            "{{ACTOR_CLIENT_ID}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "06 - Activate Agent",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const j=pm.response.json(); if (j.id) pm.collectionVariables.set(\"agent_id\", j.id);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_access_token}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/scim+json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/scim+json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"schemas\": [\n    \"urn:ietf:params:scim:schemas:core:ibm:2.0:Agent\"\n  ],\n  \"displayName\": \"UC1 Course Conversational Agent\",\n  \"description\": \"Conversational AI agent with direct protected course tools\",\n  \"permissions\": [],\n  \"status\":\"ACTIVE\",\n  \"tags\": [\n    \"course-agent\",\n    \"direct-tools\",\n    \"conversational-ai\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{TENANT}}/v1.0/Agents/a0c83296-1ca1-438f-b81e-1d09699eeacf",
+          "host": [
+            "{{TENANT}}"
           ],
           "path": [
             "v1.0",
             "Agents",
-            "{{agent_id}}"
+            "a0c83296-1ca1-438f-b81e-1d09699eeacf"
           ]
         }
       },

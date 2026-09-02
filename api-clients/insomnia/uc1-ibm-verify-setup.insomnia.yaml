@@ -1,0 +1,312 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: UC1 IBM Verify Setup
+meta:
+  id: wrk_2588739bdfc74c3584f20091ee57f79d
+  created: 1788352083454
+  modified: 1788352083454
+  description: ""
+collection:
+  - url: "{{TENANT}}/oauth2/token"
+    name: 01 - Get Admin Access Token
+    meta:
+      id: req_d6e0af28ef314771b08e52d6e4216a14
+      created: 0
+      modified: 1788353473342
+      isPrivate: false
+      description: ""
+      sortKey: -6000
+    method: POST
+    body:
+      mimeType: application/x-www-form-urlencoded
+      params:
+        - name: grant_type
+          value: client_credentials
+          description: ""
+          disabled: false
+        - name: client_id
+          value: "{{VERIFY_ADMIN_CLIENT_ID}}"
+          description: ""
+          disabled: false
+          multiline: false
+          type: text
+        - name: client_secret
+          value: "{{VERIFY_ADMIN_CLIENT_SECRET}}"
+          description: ""
+          disabled: false
+    headers:
+      - name: Content-Type
+        value: application/x-www-form-urlencoded
+    authentication:
+      type: none
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{TENANT}}/v1.0/Agents"
+    name: 04 Get Agent Details
+    meta:
+      id: req_f3be5932f0334efeafc2402e61efe7a1
+      created: 0
+      modified: 1788356193890
+      isPrivate: false
+      description: ""
+      sortKey: -5187.5
+    method: GET
+    body:
+      mimeType: application/x-www-form-urlencoded
+      text: ""
+    headers:
+      - name: Authorization
+        value: Bearer {{ADMIN_ACCESS_TOKEN}}
+      - name: Accept
+        value: application/scim+json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{TENANT}}/oauth2/register"
+    name: 02 - DCR - Create Actor Client
+    meta:
+      id: req_6b7580af6bc447cb940ca30e458b5b8e
+      created: 1788352743308
+      modified: 1788353787776
+      isPrivate: false
+      description: ""
+      sortKey: -5500
+    method: POST
+    body:
+      mimeType: text/plain
+      text: |-
+        {
+          "client_name": "UC1 Course Conversational Agent",
+          "grant_types": [
+            "client_credentials"
+          ],
+          "scope": "agent.run",
+          "token_endpoint_auth_method": "client_secret_post"
+        }
+    headers:
+      - name: Content-Type
+        value: text/plain
+      - name: Authorization
+        value: Bearer {{ADMIN_ACCESS_TOKEN}}
+        description: ""
+        disabled: false
+    authentication:
+      type: none
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{TENANT}}/v1.0/Agents"
+    name: 03 - Onboard Agent
+    meta:
+      id: req_20fe1ff81cb74833b252571e86aca623
+      created: 1788353274883
+      modified: 1788356024742
+      isPrivate: false
+      description: ""
+      sortKey: -5250
+    method: POST
+    body:
+      mimeType: text/plain
+      text: >-
+        {
+          "schemas": [
+            "urn:ietf:params:scim:schemas:core:ibm:2.0:Agent"
+          ],
+          "displayName": "UC1 Course Conversational Agent",
+          "description": "Conversational AI agent with direct protected course tools",
+          "permissions": [],
+          "tags": [
+            "course-agent",
+            "direct-tools",
+            "conversational-ai"
+          ]
+        }
+    headers:
+      - name: Content-Type
+        value: text/plain
+        disabled: true
+      - name: Authorization
+        value: Bearer {{ADMIN_ACCESS_TOKEN}}
+        description: ""
+        disabled: false
+      - name: Accept
+        value: application/scim+json
+        description: ""
+        disabled: false
+      - name: Content-Type
+        value: application/scim+json
+        description: ""
+        disabled: false
+    authentication:
+      type: none
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{TENANT}}/oauth2/register/6b386e3e-cb1e-4c94-8259-42fa71828c16"
+    name: 05 - DCR - Associate Actor Client with Agent
+    meta:
+      id: req_90182b3518ca4459ad1adbe84f36f48d
+      created: 1788354107150
+      modified: 1788356157716
+      isPrivate: false
+      description: ""
+      sortKey: -5125
+    method: PUT
+    body:
+      mimeType: text/plain
+      text: |-
+        {
+          "client_name": "UC1 Course Conversational Agent",
+          "grant_types": [
+            "client_credentials"
+          ],
+          "extension": {
+            "entity_id": "a0c83296-1ca1-438f-b81e-1d09699eeacf",
+            "entity_type": "agent"
+          },
+          "scope": "agent.run",
+          "token_endpoint_auth_method": "client_secret_post"
+        }
+    headers:
+      - name: Content-Type
+        value: text/plain
+        disabled: true
+      - name: Authorization
+        value: Bearer {{ADMIN_ACCESS_TOKEN}}
+        description: ""
+        disabled: false
+      - name: Accept
+        value: application/scim+json
+        description: ""
+        disabled: true
+      - name: Content-Type
+        value: application/json
+        description: ""
+        disabled: false
+    authentication:
+      type: none
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{TENANT}}/v1.0/Agents/{{ _.AGENT_ID }}"
+    name: 06 - Activate Agent
+    meta:
+      id: req_7e17d636538849ac8ea388355da83cad
+      created: 1788369574857
+      modified: 1788369711184
+      isPrivate: false
+      description: ""
+      sortKey: -5062.5
+    method: PUT
+    body:
+      mimeType: text/plain
+      text: >-
+        {
+          "schemas": [
+            "urn:ietf:params:scim:schemas:core:ibm:2.0:Agent"
+          ],
+          "displayName": "UC1 Course Conversational Agent",
+          "description": "Conversational AI agent with direct protected course tools",
+          "permissions": [],
+          "status":"ACTIVE",
+          "tags": [
+            "course-agent",
+            "direct-tools",
+            "conversational-ai"
+          ]
+        }
+    headers:
+      - name: Content-Type
+        value: text/plain
+        disabled: true
+      - name: Authorization
+        value: Bearer {{ADMIN_ACCESS_TOKEN}}
+        description: ""
+        disabled: false
+      - name: Accept
+        value: application/scim+json
+        description: ""
+        disabled: true
+      - name: Content-Type
+        value: application/json
+        description: ""
+        disabled: false
+    authentication:
+      type: none
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_d64993cc8e77bf4b343223f75f704eee1dbe1c92
+    created: 1788352083461
+    modified: 1788356040178
+  cookies:
+    - id: 45a36282-094a-4918-bc42-36b85471effd
+      key: CIPD-S-SESSION-ID
+      value: 0:1:rediscol01a:q3q/zJzqgIkdp/XIcgXl2ROqGpzG2N61NYXG+VyXkwQ=
+      domain: rajeev.ice.ibmcloud.com
+      path: /
+      secure: true
+      httpOnly: true
+      hostOnly: true
+    - id: f2e8d000-738e-4f8c-afd7-edcf60fc4c2b
+      key: CISESSIONIDPR01A
+      value: PBC5YS:4238940180
+      domain: ice.ibmcloud.com
+      path: /
+      secure: true
+      httpOnly: true
+      hostOnly: false
+environments:
+  name: Base Environment
+  meta:
+    id: env_3b500fdaea1746abb7cc3393c8a0a25b
+    created: 0
+    modified: 1788369614840
+    isPrivate: false
+  data:
+    TENANT: https://rajeev.ice.ibmcloud.com
+    VERIFY_ADMIN_CLIENT_ID: f042e9e0-4bae-4b74-ad6d-3793f31314ef
+    VERIFY_ADMIN_CLIENT_SECRET: xAxpVwRYsf
+    ADMIN_ACCESS_TOKEN: _gZLtDDxEuB6ztEQNwngbM8wEHt16-6APRFcZIwm7ho.eTobhdNyM5XWXmaVKHtkpasjT0GIFoPeK73imQxXoUbc-5fEsFkRcK9C5i3bDSsW8Iqi79tn2aIHvoYPMBcH3g.M18xNzg4MzU2MDQ0XzI2
+    actor_client_id: ""
+    actor_client_secret: ""
+    actor_client_reference: ""
+    AGENT_ID: ""
+    actor_scope: agent.run
+    resource_client_id: ""
+    resource_client_secret: ""
+    actor_access_token: ""

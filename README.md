@@ -363,14 +363,21 @@ curl --request GET "$TENANT/v1.0/Agents" \
 
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
+Record the Agent ID
+
+```bash
+export AGENT_ID={{agent_id}}
+
 ## Associate the OAuth application
 
+### Using cURL
 ```
 curl --request PUT "$TENANT/oauth2/register/$ACTOR_CLIENT_ID" \
   --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
   --header "Content-Type: application/json" \
   --data "$(envsubst < curl/payloads/actor-client-dcr-update.json)"  
 ```
+
 ### Postman
 
 *. Make sure you have ACTOR_CLIENT_ID and AGENT_ID set in environment<br>
@@ -392,6 +399,88 @@ From UI,to associate the OAuth application after the Agent has been created perf
 6. Reopen the Agent and verify that the OAuth application is shown under its identity and authentication configuration.
 
 ![Agent Actor Identity association](images/uc1-04-agent-actor-association.png)
+
+### Activate the Agent
+
+A newly created Agent is not yet ready for runtime use. After associating the Agent OAuth application with the Agent identity, update the Agent status to `ACTIVE`.
+
+The activation payload is provided in:
+
+```text
+payloads/course-agent-activate.json
+```
+
+The payload contains:
+
+```json
+{
+  "schemas": [
+    "urn:ietf:params:scim:schemas:core:ibm:2.0:Agent"
+  ],
+  "displayName": "UC1 Course Conversational Agent",
+  "description": "Conversational AI agent with direct protected course tools",
+  "permissions": [],
+  "status": "ACTIVE",
+  "tags": [
+    "course-agent",
+    "direct-tools",
+    "conversational-ai"
+  ]
+}
+```
+
+> The `AGENT_ID` used below is the Agent Registry ID returned when the Agent was created earlier in this step.
+
+Choose either **cURL**, **Postman**, or **Insomnia** to activate the Agent.
+
+### Option 1 — Using cURL
+
+Update the Agent using the activation payload:
+
+```bash
+curl --request PUT "$TENANT/v1.0/Agents/$AGENT_ID" \
+  --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
+  --header "Accept: application/scim+json" \
+  --header "Content-Type: application/scim+json" \
+  --data @curl/payloads/course-agent-activate.json
+```
+
+After the request succeeds, the Agent status should be:
+
+```text
+ACTIVE
+```
+
+### Option 2 — Using Postman
+
+Create a `PUT` request to:
+
+```text
+{{ TENANT }}/v1.0/Agents/{{ AGENT_ID }}
+```
+
+* Run **06 Activate Agent**.
+
+
+### Option 3 — Using Insomnia
+
+Create a `PUT` request to:
+
+```text
+{{ TENANT }}/v1.0/Agents/{{ AGENT_ID }}
+```
+* Run **06 Activate Agent**.
+
+
+### Verify the Agent configuration
+
+Regardless of which method was used, verify the final Agent configuration before continuing.
+
+The Agent should now:
+
+- have the display name `UC1 Course Conversational Agent`;
+- be associated with the Agent OAuth application created in Step 2; and
+- have a status of `ACTIVE`.
 
 For more info on onboarding of Agents,please refer :https://www.ibm.com/docs/en/agent-identity?topic=tasks-onboarding-ai-agent
 
@@ -529,7 +618,7 @@ After the request succeeds, open the IBM Verify administration console and verif
 Applications → Authorization detail types
 ```
 
-### Using the IBM Verify administration console
+### Option 2 — Using the IBM Verify administration console
 
 1. Open the **IBM Verify administration console**.
 2. Go to **Applications → Authorization detail types**.
@@ -557,14 +646,21 @@ Create an IBM Verify application for OAuth 2.0 Token Exchange as defined by RFC 
 
 The Token Exchange application is used to authenticate the request to IBM Verify's Security Token Service (STS). It is separate from the agent OAuth application created in Step 2:
 
-- the **agent OAuth application** authenticates the AI agent and obtains the `actor_token`;
-- the **Token Exchange application** authenticates the application making the token-exchange request to IBM Verify;
-- the **subject token** represents the signed-in human user;
-- the resulting **delegated access token** represents the authority granted for the protected Course API call.
+### Create & Configure the OpenID connect for token exchange
 
-### Token Exchange configuration
+### Create the STS client
 
-Configure the application with the following values:
+In the IBM Verify administration console:
+
+1. Go to **Applications**.
+2. Click **Add Application --> OpenID Connect**.
+3. Enter a name for the application, for example:
+
+   ```text
+   UC1 Course Agent Token Exchange
+4.  Select grant type  the **Token Exchange**.
+
+5. Configure the application with the following values:
 
 | Setting | Sample value | Why it is required |
 |---|---|---|
@@ -605,12 +701,12 @@ scope                = course.read course.enroll
 audience             = course-api
 authorization_details = urn:ibm:demo:verify:agent_action
 
-Capture:
+After completing the Token Exchange client ID configuration, record:
 
-```text
-STS_CLIENT_ID=<STS client ID>
-STS_CLIENT_SECRET=<STS client secret>
-```
+```bash
+export STS_CLIENT_ID="<sts-client-id>"
+export STS_CLIENT_SECRET="<sts-client-secret>"
+
 
 > Note : The client ID of the Token Exchange application needs to placed as STS_CLIENT_ID and respective SECRET in environment file
 

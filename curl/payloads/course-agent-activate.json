@@ -1,0 +1,14 @@
+{
+  "schemas": [
+    "urn:ietf:params:scim:schemas:core:ibm:2.0:Agent"
+  ],
+  "displayName": "UC1 Course Conversational Agent",
+  "description": "Conversational AI agent that invokes protected course tools",
+  "permissions": [],
+  "status":"ACTIVE",
+  "tags": [
+    "course-agent",
+    "direct-tools",
+    "conversational-ai"
+  ]
+}
