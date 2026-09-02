@@ -207,6 +207,7 @@ Configure the API client with the following entitlements:
 | **Entitlement** | **API entitlement** | **Why it is required** |
 |---|---|---|
 | **Configure AI agents** | `writeAgents` | Required to create and update the Agent Registry record used by this sample. |
+| ** Manage AI agents** | `manageAgentStatus`| Review and manage AI agent status |
 | **Manage OIDC client registration dynamically** | `manageOidcDynamicClient` | Required to create the agent OAuth client through Dynamic Client Registration when DCR requires bearer-token authentication. |
 
 Do not select unrelated administrative entitlements. They are not required by this sample.
@@ -241,7 +242,12 @@ The Course Agent Application needs OAuth credentials that it can use at runtime 
 
 This tutorial uses **Dynamic Client Registration (DCR)** to create that OAuth application. DCR is the registration method chosen for this tutorial; it is **not a requirement of the Agentic Identity or token-exchange flow**. The same OAuth application can also be created manually through **Applications** in the IBM Verify administration console and configured with the Client Credentials grant.
 
-For this tutorial, continue with the DCR method below.
+For this tutorial, create the application through DCR using **one** of the following methods:
+
+- cURL
+- Postman
+- Insomnia
+
 
 ### Using cURL
 
@@ -251,19 +257,6 @@ curl --request POST "$TENANT/oauth2/register" \
   --header "Content-Type: application/json" \
   --data @curl/payloads/actor-client-dcr.json
 ```
-
-> Creating the client through DCR also creates an application that can be viewed and managed in the IBM Verify administration console.
-
-The supplied DCR payload creates the OAuth application required by this sample with the Client Credentials grant and the agent.run scope.
-
-From the response, record:
-
-```bash
-export ACTOR_CLIENT_ID="<client-id>"
-export ACTOR_CLIENT_SECRET="<client-secret>"
-```
-These credentials belong to the agent's OAuth application and are used only to obtain the actor token at runtime.
-
 
 ### Postman
 
@@ -283,6 +276,18 @@ These credentials belong to the agent's OAuth application and are used only to o
 6. Copy the returned client ID and secret into the environment.
 
 
+> Creating the client through DCR also creates an application that can be viewed and managed in the IBM Verify administration console.
+
+The supplied DCR payload creates the OAuth application required by this sample with the Client Credentials grant and the agent.run scope.
+
+From the response, record:
+
+```bash
+export ACTOR_CLIENT_ID="<client-id>"
+export ACTOR_CLIENT_SECRET="<client-secret>"
+```
+These credentials belong to the agent's OAuth application and are used only to obtain the actor token at runtime.
+
 ## Step 3 — Onboard the conversational agent and associate the actor client
 
 The OAuth application created in Step 2 provides the runtime credentials used by the conversational agent to obtain an actor token.
@@ -297,16 +302,14 @@ Display name: UC1 Course Conversational Agent
 Description: Conversational AI agent that invokes protected course tools
 Tags: course-agent, direct-tools, conversational-ai
 
-After creating the Agent, record the generated Agent ID.
+For this tutorial, create Onboard agent through **one** of the following methods:
 
-Use below curl for Agent creation: 
-```bash
-export TENANT_URL="https://<tenant>"
-export ADMIN_ACCESS_TOKEN="<admin-access-token>"
-export ACTOR_CLIENT_ID="<actor-client-id>"
+- cURL
+- Postman
+- Insomnia
 
-
-curl --request POST "$TENANT_URL/v1.0/Agents" \
+```
+curl --request POST "$TENANT/v1.0/Agents" \
   --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
   --header "Accept: application/scim+json" \
   --header "Content-Type: application/scim+json" \
