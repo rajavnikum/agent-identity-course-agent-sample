@@ -281,7 +281,7 @@ curl --request POST "$TENANT/oauth2/register" \
 
 The supplied DCR payload creates the OAuth application required by this sample with the Client Credentials grant and the agent.run scope.
 
-From the response, record:
+From the DCR application , record which will be used in step 7:
 
 ```bash
 export ACTOR_CLIENT_ID="<client-id>"
@@ -336,7 +336,6 @@ The sample payload uses:
 }
 ```
 
-
 ### Validate Agents Created 
 
 ```
@@ -360,8 +359,24 @@ via,ui one can create and validate created agents.
 
 ## Associate the OAuth application
 
+```
+curl --request PUT "$TENANT/oauth2/register/$ACTOR_CLIENT_ID" \
+  --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
+  --header "Content-Type: application/json" \
+  --data "$(envsubst < curl/payloads/actor-client-dcr-update.json)"  
+```
+### Postman
 
-After the Agent has been created
+*. Make sure you have ACTOR_CLIENT_ID and AGENT_ID set in environment
+*. Run **05 - 05 - DCR - Associate Actor Client with Agent**.
+
+### Insomnia
+
+*. Make sure you have ACTOR_CLIENT_ID and AGENT_ID set in environment
+*. Run **05 - 05 - DCR - Associate Actor Client with Agent**.
+
+
+From UI,to associate the OAuth application after the Agent has been created perform the below steps:
 
 1. Open the Agent in the IBM Verify administration console.
 2. Edit the Agent.
@@ -371,13 +386,6 @@ After the Agent has been created
 6. Reopen the Agent and verify that the OAuth application is shown under its identity and authentication configuration.
 
 ![Agent Actor Identity association](images/uc1-04-agent-actor-association.png)
-
-
-In Postman, continue the same setup collection:
-
-6. Run **03 - Create Agent and Associate Actor Client**.
-7. The response stores `agent_id` when the response includes `id`.
-8. Run **04 - Get Agent Details** and verify `oauthClients` contains the actor client.
 
 For more info on onboarding of Agents,please refer :https://www.ibm.com/docs/en/agent-identity?topic=tasks-onboarding-ai-agent
 
@@ -401,18 +409,17 @@ Configure the application as follows:
 
 | Setting | Sample value | Why it is required |
 |---|---|---|
-| Grant type | Authorization Code | Authenticates the human user through the browser and returns an authorization code to the sample application. |
+| Grant type | Authorization Code | Authenticates the Human User through the browser and returns an authorization code to the Course Agent Application. |
 | PKCE | Required | Protects the Authorization Code flow against interception of the authorization code. |
-| Redirect URI | `http://localhost:8000/callback` | Returns the browser to the sample application after successful authentication. |
-| Access token format | JWT | Allows the subject token to carry claims that IBM Verify can evaluate as part of the delegated token exchange flow. |
-| Scopes | `openid profile email course.read course.enroll` | Provides the user identity information and course permissions required by the sample. |
+| Redirect URI | `http://localhost:8000/callback` | Returns the browser to the Course Agent Application after successful authentication. |
+| Access token format | JWT | The Course Agent Application reads identity claims from the subject access token locally when establishing the logged-in subject for this sample. JWT is therefore used by this sample implementation so those claims can be extracted locally. OAuth 2.0 Token Exchange itself does not require the subject access token to be JWT-formatted; an opaque access token can instead have its claims resolved through introspection. |
+| Scopes | `openid profile email course.read course.enroll` | Requests the identity and course permissions required by the sample. |
 
-
-Capture:
+From the application, record which will be used in step 7:
 
 ```text
-SUBJECT_CLIENT_ID=<subject client ID>
-SUBJECT_CLIENT_SECRET=<subject client secret, when required>
+SUBJECT_CLIENT_ID=<subject-client-id>
+SUBJECT_CLIENT_SECRET=<subject-client-secret>
 ```
 
 ![Subject application configuration](images/uc1-05-subject-client.png)
@@ -425,12 +432,16 @@ This sample uses the OAuth may_act relationship for this validation.
 
 Under the application's Introspect configuration, add a may_act attribute that identifies the agent OAuth client created in Step 2.
 
+![Subject Actor association](images/uc1-06-subject-actor-association.png)
+
+
 Conceptually, the relationship is:
-{
+
   "may_act": {
-    "client_id": "<actor-client-id>"
+    "client_id": "<actor-client-id>",
+    "sub":"<actor-client-id>"
   }
-}
+
 This allows IBM Verify to validate the relationship between the human subject and the agent actor during OAuth 2.0 Token Exchange.
 
 Save the application after completing the configuration.
