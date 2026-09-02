@@ -260,19 +260,19 @@ curl --request POST "$TENANT/oauth2/register" \
 
 ### Postman
 
-*. Import `api-clients/postman/uc1-ibm-verify-setup.postman_collection.json`.
-*. Set `tenant_url`, `admin_client_id`, and `admin_client_secret`.
-*. Run **01 - Get Admin Access Token**.
-*. Run **02 - DCR - Create Actor Client**.
+*. Import `api-clients/postman/uc1-ibm-verify-setup.postman_collection.json`.<br>
+*. Set `tenant_url`, `admin_client_id`, and `admin_client_secret`.<br>
+*. Run **01 - Get Admin Access Token**.<br>
+*. Run **02 - DCR - Create Actor Client**.<br>
 *. The collection stores `actor_client_id` and `actor_client_secret` from the response.
 
 ### Insomnia
 
-*. Import `api-clients/insomnia/uc1-ibm-verify-setup.insomnia.json`.
-*. Edit the base environment.
-*. Run **01 Get Admin Access Token**.
-*. Copy the access token to `admin_access_token`.
-*. Run **02 DCR Create Actor Client**.
+*. Import `api-clients/insomnia/uc1-ibm-verify-setup.insomnia.json`.<br>
+*. Edit the base environment.<br>
+*. Run **01 Get Admin Access Token**.<br>
+*. Copy the access token to `admin_access_token`.<br>
+*. Run **02 DCR Create Actor Client**.<br>
 *. Copy the returned client ID and secret into the environment.
 
 
