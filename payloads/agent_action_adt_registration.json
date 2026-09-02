@@ -1,0 +1,10 @@
+{
+  "type": "urn:ibm:demo:verify:agent_action",
+  "schema": "{\n  \"description\": \"Agent action authorization details for the IBM Verify conversational AI direct tools sample\",\n  \"type\": \"object\",\n  \"required\": [\"type\", \"courseId\", \"operationDetails\"],\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"type\": {\n      \"type\": \"string\",\n      \"const\": \"urn:ibm:demo:verify:agent_action\"\n    },\n    \"courseId\": {\n      \"type\": \"string\"\n    },\n    \"operationDetails\": {\n      \"type\": \"object\",\n      \"required\": [\"creator\", \"affectedPerson\", \"loggedInSubject\", \"action\", \"targetSystem\", \"resource\"],\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"creator\": { \"type\": \"string\" },\n        \"affectedPerson\": { \"type\": \"string\" },\n        \"loggedInSubject\": { \"type\": \"string\" },\n        \"action\": {\n          \"type\": \"string\",\n          \"enum\": [\"list_available_courses\", \"list_enrolled_courses\", \"enroll_course\"]\n        },\n        \"targetSystem\": { \"type\": \"string\" },\n        \"resource\": { \"type\": \"string\" }\n      }\n    }\n  }\n}",
+  "inlineMode": true,
+  "description": "Agent action authorization details for the Course Agent sample",
+  "useCustomMapping": false,
+  "signatureStrategy": "full_hash",
+  "consentInlineText": "JE9JRENfQVVUSERFVEFJTF9MQUJFTF9TVERUSVRMRSQ8YnIvPiRPSURDX0FVVEhERVRBSUxfTEFCRUxfU1RESUQkIHthZC5pZGVudGlmaWVyfQ",
+  "consentLabel": ""
+}

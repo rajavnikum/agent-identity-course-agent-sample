@@ -209,6 +209,7 @@ Configure the API client with the following entitlements:
 | **Configure AI agents** | `writeAgents` | Required to create and update the Agent Registry record used by this sample. |
 | **Manage AI agents** | `manageAgentStatus`| Review and manage AI agent status |
 | **Manage OIDC client registration dynamically** | `manageOidcDynamicClient` | Required to create the agent OAuth client through Dynamic Client Registration when DCR requires bearer-token authentication. |
+| **Manage authorization detail types** | `manageAuthDetailTypes` | Create and manage the Authorization Details Type used by this sample. |
 
 Do not select unrelated administrative entitlements. They are not required by this sample.
 
@@ -496,17 +497,49 @@ The application builds an authorization detail with the type:
 urn:ibm:demo:verify:agent_action
 ```
 
-The schema used by the sample is in:
+The readable JSON Schema is provided in:
 
 ```text
 payloads/agent_action_adt_schema.json
 ```
 
-A runtime request contains operation information similar to:
+Choose either **cURL** or **UI** to create the Authorization Details Type.
 
+### Option 1 — Using cURL
 
+Create the Authorization Details Type using the administrative access token obtained in Step 1:
 
-Register the schema and configure the IBM Verify criteria .
+```bash
+curl --request POST "$TENANT/oidc-mgmt/v1.0/auth-detail-types" \
+  --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
+  --header "Content-Type: application/json" \
+  --header "Accept: application/json" \
+  --data @payloads/agent_action_adt_registration.json
+```
+
+A successful request creates:
+
+```text
+urn:ibm:demo:verify:agent_action
+```
+
+After the request succeeds, open the IBM Verify administration console and verify that the Authorization Details Type appears under:
+
+```text
+Applications → Authorization detail types
+```
+
+### Option 2 — Using UI
+
+* Go to IBM Verify administration console<br>
+* Under Applications,choose Authorization detail types<br>
+* Click Create<br>
+* Choose standard 
+* Place **urn:ibm:demo:verify:agent_action** in name
+* Place the content of agent-identity-course-agent-sample/payloads/agent_action_adt_schema.json inside schema.
+* Keep rest of values default and in consent configuration place $OIDC_AUTHDETAIL_LABEL_STDTITLE$<br/>$OIDC_AUTHDETAIL_LABEL_STDID$ {ad.identifier} value
+* Click Create.
+
 
 
 ## Step 6 — Configure the STS / Token Exchange client
@@ -768,477 +801,6 @@ api_result.validation
 
 These diagnostics exist for the tutorial. Do not expose raw token claims or authorization internals to untrusted users in a production UI.
 
-## Verify the delegated token using introspection
-
-Use the **resource client**:
-
-```bash
-curl --request POST "https://<tenant>/oauth2/introspect" \
-  --user "<resource-client-id>:<resource-client-secret>" \
-  --header "Content-Type: application/x-www-form-urlencoded" \
-  --data-urlencode "token=<delegated-access-token>"
-```
-
-Or import `api-clients/postman/uc1-runtime-diagnostics.postman_collection.json` and run **Introspect Delegated Token as Course API Resource**.
-
-Expected minimum result:
-
-```json
-{
-  "active": true
-}
-```
-
-Also inspect the audience, scopes, actor representation, and authorization details returned by your IBM Verify configuration.
-
-
-## Direct tools and function invocation
-
-This sample uses **direct Python function integration**. There is no MCP server between the conversational agent and the Course API.
-
-The AI model does not call an arbitrary Python function by name. `llm_agent.py` first converts the user's natural-language request into one of three allow-listed actions. The `/chat` handler then passes that action to the protected Course API adapter.
-
-### Tools exposed by this sample
-
-| User intent | Agent action | Required scope | Protected operation |
-| --- | --- | --- | --- |
-| "What courses are available?" | `list_available_courses` | `course.read` | Return the available course catalog |
-| "Show my enrolled courses" | `list_enrolled_courses` | `course.read` | Return courses for the authenticated subject |
-| "Enroll me in advanced security training" | `enroll_course` | `course.enroll` | Enroll the authenticated subject in the selected course |
-
-These are the only actions accepted by the agent:
-
-```python
-ALLOWED_ACTIONS = {
-    "list_available_courses",
-    "enroll_course",
-    "list_enrolled_courses",
-}
-```
-
-### Where is the tool selected?
-
-The selection happens in `llm_agent.py`.
-
-```python
-decision = decide_action(message)
-```
-
-`decide_action()` asks the configured model to classify the request and return structured JSON similar to:
-
-```json
-{
-  "action": "enroll_course",
-  "course_id": "SEC-301",
-  "target_subject": "self",
-  "reason": "User asked to enroll in advanced security training."
-}
-```
-
-For example:
-
-```text
-User:
-Please enroll me into advanced security training
-
-        |
-        v
-
-llm_agent.py
-decide_action(message)
-
-        |
-        v
-
-AgentDecision(
-    action="enroll_course",
-    course_id="SEC-301",
-    target_subject="self"
-)
-```
-
-The model can select only an action present in `ALLOWED_ACTIONS`. The application rejects unsupported action values.
-
-> The LLM selects intent. The LLM does not grant access and does not issue the OAuth token.
-
-### Which function is called after tool selection?
-
-The `/chat` handler in `app.py` is the agent orchestrator.
-
-After `decide_action()` returns, `app.py` performs the identity and authorization flow and finally calls:
-
-```python
-api_result = call_course_api(
-    delegated_token=delegated_token,
-    action=action,
-    requested_subject=target_subject,
-    logged_in_subject=logged_in_subject,
-)
-```
-
-`call_course_api()` is implemented in `course_api.py`.
-
-The action passed to this function determines the protected course operation:
-
-```python
-if action == "list_available_courses":
-    # Return AVAILABLE_COURSES
-
-if action == "list_enrolled_courses":
-    # Return courses for the logged-in subject
-
-if action == "enroll_course":
-    # Read courseId from authorization_details
-    # Validate the course
-    # Enroll the logged-in subject
-```
-
-Therefore, the direct-tool mapping is:
-
-```text
-list_available_courses
-        |
-        +--> call_course_api(... action="list_available_courses")
-                  |
-                  +--> return AVAILABLE_COURSES
-
-
-list_enrolled_courses
-        |
-        +--> call_course_api(... action="list_enrolled_courses")
-                  |
-                  +--> ENROLLED_COURSES[logged_in_subject]
-
-
-enroll_course
-        |
-        +--> call_course_api(... action="enroll_course")
-                  |
-                  +--> read courseId from authorization_details
-                  |
-                  +--> validate course
-                  |
-                  +--> add course to ENROLLED_COURSES[logged_in_subject]
-```
-
-### Complete function call flow
-
-For the prompt:
-
-```text
-Please enroll me into advanced security training
-```
-
-the actual application flow is:
-
-```text
-app.py
-chat()
-  |
-  +--> llm_agent.py
-  |      decide_action(message)
-  |         |
-  |         +--> AgentDecision(
-  |                 action="enroll_course",
-  |                 course_id="SEC-301",
-  |                 target_subject="self"
-  |              )
-  |
-  +--> app.py
-  |      resolve_target_subject(...)
-  |
-  +--> rar_builder.py
-  |      build_agent_authorization_details(
-  |          action="enroll_course",
-  |          course_id="SEC-301",
-  |          affected_person=<subject>
-  |      )
-  |
-  +--> verify_oauth.py
-  |      get_actor_token()
-  |         |
-  |         +--> IBM Verify /oauth2/token
-  |              grant_type=client_credentials
-  |
-  +--> verify_oauth.py
-  |      token_exchange(
-  |          subject_token,
-  |          actor_token,
-  |          authorization_details
-  |      )
-  |         |
-  |         +--> IBM Verify STS
-  |              OAuth 2.0 Token Exchange
-  |
-  +--> course_api.py
-         call_course_api(
-             delegated_token,
-             action="enroll_course",
-             requested_subject=<subject>,
-             logged_in_subject=<subject>
-         )
-            |
-            +--> _validate_scope()
-            +--> _validate_audience()
-            +--> _validate_actor()
-            +--> _validate_authorization_details()
-            |
-            +--> execute enroll_course operation
-            |
-            +--> return result
-  |
-  +--> app.py
-         build_answer(api_result)
-  |
-  +--> Human receives response
-```
-
-### Why the tool function obtains authorization before execution
-
-A direct tool call is **not** executed immediately after the LLM selects the action.
-
-The sequence is deliberately:
-
-```text
-LLM selects action
-        |
-        v
-Build operation context
-        |
-        v
-Obtain agent actor token
-        |
-        v
-Exchange subject + actor context at IBM Verify
-        |
-        v
-Receive delegated token
-        |
-        v
-Call protected tool
-        |
-        v
-Tool validates delegated authorization
-        |
-        v
-Execute operation
-```
-
-This is the security value of the sample.
-
-Without IBM Verify, an implementation could effectively become:
-
-```text
-LLM says "enroll"
-        |
-        v
-Python function enrolls user
-```
-
-In this sample, the flow is:
-
-```text
-LLM says "enroll"
-        |
-        v
-Application identifies requested operation
-        |
-        v
-IBM Verify evaluates subject + actor + requested authorization details
-        |
-        v
-Protected Course API validates the delegated token
-        |
-        v
-Only then is the enrollment operation executed
-```
-
-### Direct tool implementation versus a framework FunctionTool
-
-Some agent frameworks explicitly register a Python method as a `FunctionTool`.
-
-This sample keeps the implementation framework-neutral. The equivalent conceptual registration is:
-
-```python
-TOOLS = {
-    "list_available_courses": call_course_api,
-    "list_enrolled_courses": call_course_api,
-    "enroll_course": call_course_api,
-}
-```
-
-The current code centralizes the protected operations in `call_course_api()` so that every action passes through the same token and authorization validation boundary.
-
-If you replace the intent classifier with AutoGen, LangGraph, CrewAI, or another agent framework, keep the IBM Verify security sequence around each protected tool invocation:
-
-```text
-Framework tool selected
-        |
-        v
-Build authorization_details
-        |
-        v
-Get actor token
-        |
-        v
-Token exchange with subject + actor
-        |
-        v
-Invoke protected tool with delegated token
-```
-
-For a source-level walkthrough, see `docs/direct-tools-function-flow.md`.
-
-
-## How the code works
-
-### `app.py` — orchestration
-
-`/login` starts the subject login flow. `/callback` stores the subject tokens in the signed session. `/chat` performs the agentic flow:
-
-```text
-message
-  -> decide_action()
-  -> resolve target subject
-  -> build authorization details
-  -> get_actor_token()
-  -> token_exchange(subject, actor, authorization_details)
-  -> call_course_api(delegated_token, action, subject)
-```
-
-### `llm_agent.py` — AI decision
-
-The classifier returns only supported actions. The application still checks the action against `ALLOWED_ACTIONS`.
-
-The model selects **what the user appears to want**. It does not decide whether the request is authorized.
-
-### `rar_builder.py` — operation context
-
-This module creates the `authorization_details` sent to IBM Verify. It binds the requested action to contextual fields such as the creator/actor, affected person, logged-in subject, target system, resource, and course ID.
-
-### `verify_oauth.py` — identity and token flow
-
-This module implements:
-
-- PKCE generation;
-- authorization URL construction;
-- authorization-code exchange for the subject token;
-- client-credentials token request for the actor token;
-- RFC 8693 token exchange.
-
-### `course_api.py` — protected resource boundary
-
-The sample Course API validates the delegated token claims before executing the operation. It checks:
-
-- expected audience;
-- actor/client relationship expected by the sample;
-- matching authorization details;
-- required scope for the action;
-- self-service subject policy.
-
-This is the critical security boundary. The API does not trust the prompt or LLM result by itself.
-
-## Using Postman and Insomnia
-
-### Setup collection
-
-Use:
-
-```text
-api-clients/postman/uc1-ibm-verify-setup.postman_collection.json
-api-clients/insomnia/uc1-ibm-verify-setup.insomnia.json
-```
-
-The setup collection is ordered:
-
-```text
-01 Get Admin Access Token
-02 DCR Create Actor Client
-03 Create Agent and Associate Actor Client
-04 Get Agent Details
-05 Get Actor Token
-06 Introspect Actor Token
-```
-
-### Runtime diagnostics collection
-
-Use:
-
-```text
-api-clients/postman/uc1-runtime-diagnostics.postman_collection.json
-api-clients/insomnia/uc1-runtime-diagnostics.insomnia.json
-```
-
-The normal subject login and token exchange are intentionally performed by the application because the PKCE verifier, browser session, OAuth state, user interaction, action, and authorization details are created dynamically at runtime.
-
-## Security controls demonstrated
-
-| Control | Enforcement point |
-|---|---|
-| Human authentication | IBM Verify authorization flow |
-| Agent authentication | IBM Verify token endpoint |
-| Agent/client association | IBM Verify Agent Registry metadata |
-| Delegated token issuance | IBM Verify STS / token exchange |
-| Operation context | Authorization Details Type |
-| API audience | Course API token validation |
-| Required scope | Course API validation |
-| Cross-user denial | Course API sample policy |
-| AI action allow-list | Application orchestration |
-
-## Production considerations
-
-This repository is a demonstration. Before production use:
-
-- store secrets in a managed secret store;
-- use an appropriate confidential/public client model for the deployed frontend architecture;
-- validate JWT signatures using the issuer JWKS or use introspection rather than unverified decoding;
-- do not return token claims to the browser as diagnostics;
-- implement durable token/session storage;
-- use TLS for all deployed endpoints;
-- define least-privilege scopes per tool;
-- configure IBM Verify policy and actor criteria for your actual trust model;
-- use a real Course API and enforce authorization at that resource;
-- audit agent identity, subject identity, requested operation, and authorization result.
-
-## Troubleshooting
-
-### `invalid authorization details`
-
-Check that `AGENT_ADT_TYPE` exactly matches the type registered in IBM Verify and that the emitted JSON conforms to the configured schema.
-
-### Token exchange succeeds but Course API returns 403 audience error
-
-Check:
-
-```dotenv
-COURSE_API_AUDIENCE=course-api
-```
-
-and verify the STS request/configuration issues the delegated token for the same audience.
-
-### Actor token fails
-
-Confirm the DCR-created client allows Client Credentials and the requested actor scope is permitted:
-
-```dotenv
-ACTOR_SCOPES=agent.run
-```
-
-### Login callback fails
-
-The IBM Verify subject application's redirect URI and `SUBJECT_REDIRECT_URI` must match exactly:
-
-```text
-http://localhost:8000/callback
-```
-
-### Introspection fails with invalid client
-
-Use the Course API resource client credentials. Do not use the STS client credentials unless that client is explicitly the protected resource—which is not the architecture documented by this sample.
-
-### Other-user prompt does not resolve a user
-
-Configure the optional Verify Directory management client. The self-service tests do not require it.
 
 
 ## IBM Verify documentation references
