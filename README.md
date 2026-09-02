@@ -367,8 +367,10 @@ Record the Agent ID
 
 ```bash
 export AGENT_ID={{agent_id}}
+```
 
-## Associate the OAuth application
+
+### Associate the OAuth application
 
 ### Using cURL
 ```
