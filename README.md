@@ -309,6 +309,7 @@ For this tutorial, create Onboard agent through **one** of the following methods
 - Postman
 - Insomnia
 
+### Using cURL
 ```
 curl --request POST "$TENANT/v1.0/Agents" \
   --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
@@ -335,8 +336,7 @@ The sample payload uses:
   ]
 }
 ```
-
-### Validate Agents Created 
+Validate Onboarded Agents 
 
 ```
 curl --request GET "$TENANT/v1.0/Agents" \
@@ -344,6 +344,7 @@ curl --request GET "$TENANT/v1.0/Agents" \
   --header "Accept: application/scim+json" \
   --header "Content-Type: application/scim+json"   
 ```
+
 ### Postman
 
 *. Run **03 - Onboard Agent**<br>
@@ -354,7 +355,11 @@ curl --request GET "$TENANT/v1.0/Agents" \
 *. Run **03 - Onboard Agent**.<br>
 *. Run **04 - Get Agent Details**.
 
-via,ui one can create and validate created agents.
+### UI 
+*. Go to Admin Console,Under **Identities** <br>
+*. Click AI agents
+*. Create Agent
+
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
 ## Associate the OAuth application
@@ -430,21 +435,44 @@ The subject token represents the signed-in human user. During token exchange, IB
 
 This sample uses the OAuth may_act relationship for this validation.
 
-Under the application's Introspect configuration, add a may_act attribute that identifies the agent OAuth client created in Step 2.
+1. Open the **Introspect** endpoint configuration.
+2. Add an introspection attribute mapping.
+3. Select **Custom rule** as the source.
+4. In the custom rule, enter:
+
+   ```json
+   {
+     "client_id": "<actor-client-id>",
+     "sub": "<actor-client-id>"
+   }
+   ```
+
+   Replace `<actor-client-id>` with the `ACTOR_CLIENT_ID` recorded in Step 2.
+
+5. Set the **Target attribute** to:
+
+   ```text
+   may_act
+   ```
+
+6. Save the mapping.
 
 ![Subject Actor association](images/uc1-06-subject-actor-association.png)
 
 
-Conceptually, the relationship is:
+The custom rule produces the value of the `may_act` attribute. Conceptually, the resulting introspection response contains:
 
+```json
+{
   "may_act": {
     "client_id": "<actor-client-id>",
-    "sub":"<actor-client-id>"
+    "sub": "<actor-client-id>"
   }
+}
+```
 
-This allows IBM Verify to validate the relationship between the human subject and the agent actor during OAuth 2.0 Token Exchange.
+> `ACTOR_CLIENT_ID` is the OAuth client ID of the **Agent OAuth application** created in Step 2. It is not the Agent Registry ID created in Step 3.
 
-Save the application after completing the configuration.
 
 ## Step 5 — Create the Authorization Details Type
 
