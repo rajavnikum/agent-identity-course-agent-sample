@@ -207,7 +207,7 @@ Configure the API client with the following entitlements:
 | **Entitlement** | **API entitlement** | **Why it is required** |
 |---|---|---|
 | **Configure AI agents** | `writeAgents` | Required to create and update the Agent Registry record used by this sample. |
-| ** Manage AI agents** | `manageAgentStatus`| Review and manage AI agent status |
+| **Manage AI agents** | `manageAgentStatus`| Review and manage AI agent status |
 | **Manage OIDC client registration dynamically** | `manageOidcDynamicClient` | Required to create the agent OAuth client through Dynamic Client Registration when DCR requires bearer-token authentication. |
 
 Do not select unrelated administrative entitlements. They are not required by this sample.
@@ -260,20 +260,21 @@ curl --request POST "$TENANT/oauth2/register" \
 
 ### Postman
 
-*. Import `api-clients/postman/uc1-ibm-verify-setup.postman_collection.json`.<br>
-*. Set `tenant_url`, `admin_client_id`, and `admin_client_secret`.<br>
-*. Run **01 - Get Admin Access Token**.<br>
-*. Run **02 - DCR - Create Actor Client**.<br>
-*. The collection stores `actor_client_id` and `actor_client_secret` from the response.
+* Import `api-clients/postman/uc1-ibm-verify-setup.postman_collection.json`.<br>
+* Set `TENANT`, `VERIFY_ADMIN_CLIENT_ID`, and `VERIFY_ADMIN_CLIENT_ID`.<br>
+* Run **01 - Get Admin Access Token**.<br>
+* Copy the access token to `ADMIN_ACCESS_TOKEN`.<br>
+* Run **02 - DCR - Create Actor Client**.<br>
+
 
 ### Insomnia
 
-*. Import `api-clients/insomnia/uc1-ibm-verify-setup.insomnia.json`.<br>
-*. Edit the base environment.<br>
-*. Run **01 Get Admin Access Token**.<br>
-*. Copy the access token to `admin_access_token`.<br>
-*. Run **02 DCR Create Actor Client**.<br>
-*. Copy the returned client ID and secret into the environment.
+* Import `api-clients/insomnia/uc1-ibm-verify-setup.insomnia.json`.<br>
+* Set `TENANT`, `VERIFY_ADMIN_CLIENT_ID`, and `VERIFY_ADMIN_CLIENT_ID`.<br>
+* Edit the base environment.<br>
+* Run **01 Get Admin Access Token**.<br>
+* Copy the access token to `ADMIN_ACCESS_TOKEN`.<br>
+* Run **02 DCR Create Actor Client**.<br>
 
 
 > Creating the client through DCR also creates an application that can be viewed and managed in the IBM Verify administration console.
