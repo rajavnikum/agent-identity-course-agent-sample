@@ -56,35 +56,61 @@ The resulting API call carries both **subject context** and **actor context**, a
 
 ## Sample architecture
 
+The sample has four logical runtime entities:
+
+- **Human User** — the person interacting with the course assistant.
+- **Course Agent Application** — the running application that interprets the user's request and orchestrates the OAuth and token-exchange flows.
+- **IBM Verify** — authenticates the human and agent, evaluates the delegation context, and issues the delegated access token.
+- **Course API** — the protected resource that validates the delegated authorization before executing a course operation.
+
+IBM Verify also contains the configuration objects used by the flow, including the human subject application, Agent identity, Agent OAuth application, Token Exchange application, and Authorization Details Type.
+
 ```text
-+------------------+          +---------------------------+
-| Human user       |          | IBM Verify                |
-| browser / chat   |          |                           |
-+--------+---------+          |  Subject client           |
-         |                    |  Actor client + Agent     |
-         | login              |  STS / Token Exchange     |
-         +------------------->|  ADT / policy             |
-         |                    +-------------+-------------+
-         |                                  ^
-         v                                  |
-+--------+-------------------------------+  |
-| Conversational Course Agent            |  |
-|                                        |  |
-|  llm_agent.py -> intent/action         |  |
-|  rar_builder.py -> auth details        |  |
-|  verify_oauth.py -> subject + actor ---+  |
-|                     token exchange --------+
-|  course_api.py -> protected tool/API       |
-+-------------------------+------------------+
-                          |
-                          v
-                 +--------+---------+
-                 | Course API       |
-                 | token validation |
-                 | policy checks    |
-                 +------------------+
++--------------------+          +----------------------------------+
+| Human User         |          | IBM Verify                       |
+| browser / chat     |          |                                  |
++---------+----------+          |  Subject OIDC Application        |
+          |                     |                                  |
+          |                     |  Agent Identity / Agent Registry |
+          |                     |          +                       |
+          |                     |  Agent OAuth Application         |
+          |                     |                                  |
+          |                     |  STS / Token Exchange Application|
+          |                     |                                  |
+          |                     |  Authorization Details Type      |
+          |                     |  and authorization policy        |
+          |                     +----------------+-----------------+
+          |                                      ^
+          v                                      |
++---------+--------------------------------------+---+
+| Course Agent Application                          |
+|                                                   |
+|  app.py          -> runtime orchestration          |
+|  llm_agent.py    -> intent / action selection      |
+|  rar_builder.py  -> authorization details          |
+|  verify_oauth.py -> subject, actor and token       |
+|                     exchange flows                 |
++--------------------------+------------------------+
+                           |
+                           | delegated access token
+                           v
+                  +--------+---------+
+                  | Course API       |
+                  |                  |
+                  | token validation |
+                  | authorization    |
+                  | course operation |
+                  +------------------+
 ```
+
+The **Course Agent Application** is the runtime component that performs the OAuth protocol operations. The **Agent Identity** in IBM Verify is the governed identity of the AI agent; it does not itself execute code. The **Agent OAuth Application** provides the credentials that the Course Agent Application uses to obtain the actor token.
+
+The runtime sequence below uses these same entity names consistently.
 The following sequence shows which logical entity performs each operation. The step numbers correspond directly to the **Runtime flow** described below.
+
+## WebSeqeunce
+ 
+ ![Flow architecture](images/websequence.png)
 
 
 ### Runtime flow
