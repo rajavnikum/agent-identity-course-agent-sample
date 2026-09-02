@@ -539,15 +539,18 @@ Applications → Authorization detail types
 
    ```text
    urn:ibm:demo:verify:agent_action
+
 6. In Schema, paste the contents of:
 
    payloads/agent_action_adt_schema.json
 7. Keep the remaining settings at their default values unless otherwise specified in this tutorial.
 8. Under Consent configuration, enter:
- ```text
+
+    ```text
      $OIDC_AUTHDETAIL_LABEL_STDTITLE$<br/>
     $OIDC_AUTHDETAIL_LABEL_STDID$ {ad.identifier}
-9. Click Create.
+
+9.   Click Create
 
 
 ## Step 6 — Configure the STS / Token Exchange client
