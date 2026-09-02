@@ -701,7 +701,7 @@ actor_token_type     = urn:ietf:params:oauth:token-type:access_token
 requested_token_type = urn:ietf:params:oauth:token-type:access_token
 scope                = course.read course.enroll
 audience             = course-api
-authorization_details = urn:ibm:demo:verify:agent_action
+authorization_details type = urn:ibm:demo:verify:agent_action
 
 After completing the Token Exchange client ID configuration, record:
 
@@ -877,6 +877,60 @@ DENIED
 ```
 
 The demo's protected API policy checks that the requested subject matches the logged-in subject. This is deliberately implemented at the protected-resource boundary; the LLM is not trusted as the authorization decision point.
+
+### Test E — Suspend the Agent and verify runtime access is blocked
+
+This test demonstrates the effect of the Agent identity lifecycle on runtime authorization.
+
+First, complete one of the normal operations while the Agent status is `ACTIVE`, for example:
+
+```text
+Show me the available courses.
+```
+
+or:
+
+```text
+Enroll me in Advanced Security Operations.
+```
+
+Confirm that the operation succeeds before continuing.
+
+#### Suspend the Agent
+
+The suspension payload is provided in:
+
+```text
+payloads/course-agent-suspend.json
+```
+
+The payload contains:
+
+```json
+{
+  "schemas": [
+    "urn:ietf:params:scim:schemas:core:ibm:2.0:Agent"
+  ],
+  "displayName": "UC1 Course Conversational Agent",
+  "description": "Conversational AI agent with direct protected course tools",
+  "permissions": [],
+  "status": "SUSPENDED",
+  "tags": [
+    "course-agent",
+    "direct-tools",
+    "conversational-ai"
+  ]
+}
+```
+### Using cURL
+
+```bash
+curl --request PUT "$TENANT/v1.0/Agents/$AGENT_ID" \
+  --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
+  --header "Accept: application/scim+json" \
+  --header "Content-Type: application/scim+json" \
+  --data @/curl/payloads/course-agent-suspend.json
+> The Agent OAuth application remains associated with the Agent identity. 
 
 ## What to look for in the logs
 
