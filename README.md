@@ -270,7 +270,7 @@ curl --request POST "$TENANT/oauth2/register" \
 
 ### Insomnia
 
-* Import `api-clients/insomnia/uc1-ibm-verify-setup.insomnia.json`.<br>
+* Import `api-clients/insomnia/uc1-ibm-verify-setup.insomnia.yaml`.<br>
 * Set `TENANT`, `VERIFY_ADMIN_CLIENT_ID`, and `VERIFY_ADMIN_CLIENT_ID`.<br>
 * Edit the base environment.<br>
 * Run **01 Get Admin Access Token**.<br>
@@ -708,7 +708,7 @@ After completing the Token Exchange client ID configuration, record:
 ```bash
 export STS_CLIENT_ID="<sts-client-id>"
 export STS_CLIENT_SECRET="<sts-client-secret>"
-
+```
 
 > Note : The client ID of the Token Exchange application needs to placed as STS_CLIENT_ID and respective SECRET in environment file
 

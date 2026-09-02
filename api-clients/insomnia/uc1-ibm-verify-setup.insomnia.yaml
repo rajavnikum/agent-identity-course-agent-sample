@@ -163,7 +163,7 @@ collection:
         send: true
         store: true
       rebuildPath: true
-  - url: "{{TENANT}}/oauth2/register/6b386e3e-cb1e-4c94-8259-42fa71828c16"
+  - url: "{{TENANT}}/oauth2/register/{{actor_client_id}}"
     name: 05 - DCR - Associate Actor Client with Agent
     meta:
       id: req_90182b3518ca4459ad1adbe84f36f48d
@@ -182,7 +182,7 @@ collection:
             "client_credentials"
           ],
           "extension": {
-            "entity_id": "a0c83296-1ca1-438f-b81e-1d09699eeacf",
+            "entity_id": "{{AGENT_ID}}",
             "entity_type": "agent"
           },
           "scope": "agent.run",
@@ -214,7 +214,7 @@ collection:
         send: true
         store: true
       rebuildPath: true
-  - url: "{{TENANT}}/v1.0/Agents/{{ _.AGENT_ID }}"
+  - url: "{{TENANT}}/v1.0/Agents/{{AGENT_ID }}"
     name: 06 - Activate Agent
     meta:
       id: req_7e17d636538849ac8ea388355da83cad
@@ -298,10 +298,10 @@ environments:
     modified: 1788369614840
     isPrivate: false
   data:
-    TENANT: https://rajeev.ice.ibmcloud.com
-    VERIFY_ADMIN_CLIENT_ID: f042e9e0-4bae-4b74-ad6d-3793f31314ef
-    VERIFY_ADMIN_CLIENT_SECRET: xAxpVwRYsf
-    ADMIN_ACCESS_TOKEN: _gZLtDDxEuB6ztEQNwngbM8wEHt16-6APRFcZIwm7ho.eTobhdNyM5XWXmaVKHtkpasjT0GIFoPeK73imQxXoUbc-5fEsFkRcK9C5i3bDSsW8Iqi79tn2aIHvoYPMBcH3g.M18xNzg4MzU2MDQ0XzI2
+    TENANT: https://xxx.cloud.com
+    VERIFY_ADMIN_CLIENT_ID: 
+    VERIFY_ADMIN_CLIENT_SECRET: 
+    ADMIN_ACCESS_TOKEN: 
     actor_client_id: ""
     actor_client_secret: ""
     actor_client_reference: ""

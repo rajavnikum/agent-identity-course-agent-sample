@@ -278,14 +278,14 @@
           }
         },
         "url": {
-          "raw": "{{TENANT}}/v1.0/Agents/a0c83296-1ca1-438f-b81e-1d09699eeacf",
+          "raw": "{{TENANT}}/v1.0/Agents/{{AGENT_ID}}",
           "host": [
             "{{TENANT}}"
           ],
           "path": [
             "v1.0",
             "Agents",
-            "a0c83296-1ca1-438f-b81e-1d09699eeacf"
+            "{{AGENT_ID}}"
           ]
         }
       },
