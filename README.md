@@ -930,7 +930,17 @@ curl --request PUT "$TENANT/v1.0/Agents/$AGENT_ID" \
   --header "Accept: application/scim+json" \
   --header "Content-Type: application/scim+json" \
   --data @curl/payloads/course-agent-suspend.json
+
+
 > The Agent OAuth application remains associated with the Agent identity. 
+
+After suspending the Agent test operation again
+
+```text
+Show me the available courses.
+```
+It should fail.
+
 
 ## What to look for in the logs
 
