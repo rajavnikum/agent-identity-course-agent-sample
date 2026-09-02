@@ -44,8 +44,8 @@ The resulting API call carries both **subject context** and **actor context**, a
 ## What the sample demonstrates
 
 - Register an OAuth client for the agent using Dynamic Client Registration (DCR).
-- Onboard the course assistant in IBM Verify Agent Registry.
-- Associate the agent identity with its OAuth client.
+- Onboard the course assistant as a governed Agent identity in IBM Verify Agent Registry.
+- Associate the Agent identity with its Agent OAuth application so runtime credentials can be related back to the governed Agent record
 - Authenticate the human with Authorization Code + PKCE.
 - Authenticate the agent with Client Credentials.
 - Build operation-specific `authorization_details` for the tool selected by the AI agent.
@@ -390,10 +390,10 @@ curl --request GET "$TENANT/v1.0/Agents" \
 
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
-Record the Agent ID
+Record the generated Agent ID. This is the stable identifier for the governed Agent identity and is also used when associating the Agent OAuth application with the Agent Registry record.
 
 ```bash
-export AGENT_ID={{agent-id}}
+export AGENT_ID="<agent-id>"
 ```
 
 
@@ -957,7 +957,7 @@ curl --request PUT "$TENANT/v1.0/Agents/$AGENT_ID" \
   --header "Accept: application/scim+json" \
   --header "Content-Type: application/scim+json" \
   --data @curl/payloads/course-agent-suspend.json
-
+```
 
 > The Agent OAuth application remains associated with the Agent identity. 
 
