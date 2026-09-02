@@ -346,6 +346,7 @@ curl --request GET "$TENANT/v1.0/Agents" \
   --header "Content-Type: application/scim+json"   
 ```
 ### Postman
+
 *. Run **03 - Onboard Agent**
 *. Run **04 - Get Agent Details**.
 
