@@ -284,8 +284,8 @@ The supplied DCR payload creates the OAuth application required by this sample w
 From the DCR application , record which will be used in step 7:
 
 ```bash
-export ACTOR_CLIENT_ID="<client-id>"
-export ACTOR_CLIENT_SECRET="<client-secret>"
+export ACTOR_CLIENT_ID="<actor-client-id>"
+export ACTOR_CLIENT_SECRET="<actor-client-secret>"
 ```
 These credentials belong to the agent's OAuth application and are used only to obtain the actor token at runtime.
 
