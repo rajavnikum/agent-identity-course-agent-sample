@@ -236,20 +236,23 @@ export ADMIN_ACCESS_TOKEN="<access-token>"
 ```
 
 
-## Step 2 — Create the agent OAuth client using DCR
+## Step 2 — Create the Agent OAuth application
 
-This sample uses Dynamic Client Registration (DCR) to create the OAuth application used by the agent at runtime.
+The Course Agent Application needs OAuth credentials that it can use at runtime to obtain an actor access token from IBM Verify.
 
-The application is configured for the Client Credentials grant. The resulting client ID and client secret are used by the running agent to obtain its actor token.
+This tutorial uses **Dynamic Client Registration (DCR)** to create that OAuth application. DCR is the registration method chosen for this tutorial; it is **not a requirement of the Agentic Identity or token-exchange flow**. The same OAuth application can also be created manually through **Applications** in the IBM Verify administration console and configured with the Client Credentials grant.
 
-Using cURL:
+For this tutorial, continue with the DCR method below.
+
+### Using cURL
 
 ```bash
-curl --request POST "https://<tenant>/oauth2/register" \
-  --header "Authorization: Bearer <admin-access-token>" \
+curl --request POST "$TENANT/oauth2/register" \
+  --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
   --header "Content-Type: application/json" \
   --data @curl/payloads/actor-client-dcr.json
 ```
+
 > Creating the client through DCR also creates an application that can be viewed and managed in the IBM Verify administration console.
 
 The supplied DCR payload creates the OAuth application required by this sample with the Client Credentials grant and the agent.run scope.
