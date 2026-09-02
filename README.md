@@ -334,9 +334,7 @@ The sample payload uses:
   ]
 }
 ```
-#### Postman or Insomnia
 
---> Run **03 - Onboard Agent**.
 
 ### Validate Agents Created 
 
@@ -346,12 +344,16 @@ curl --request GET "$TENANT/v1.0/Agents" \
   --header "Accept: application/scim+json" \
   --header "Content-Type: application/scim+json"   
 ```
-#### Postman or Insomnia
+### Postman
+6. Run **03 - Onboard Agent**
+6. Run **04 - Get Agent Details**.
 
---> Run **04 - Get Agent Details**.
+### Insomnia
 
-3. Run **03 - Onboard Agent**.
+7. Run **03 - Onboard Agent**..
+8. Run **04 - Get Agent Details**.
 
+via,ui one can check too .
 ![Agent registry record](images/uc1-03-agent-registry.png)
 
 ## Associate the OAuth application
