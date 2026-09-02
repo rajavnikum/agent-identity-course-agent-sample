@@ -366,7 +366,7 @@ curl --request GET "$TENANT/v1.0/Agents" \
 Record the Agent ID
 
 ```bash
-export AGENT_ID={{agent_id}}
+export AGENT_ID={{agent-id}}
 ```
 
 

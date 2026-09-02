@@ -254,7 +254,7 @@ collection:
         description: ""
         disabled: true
       - name: Content-Type
-        value: application/json
+        value: application/scim+json
         description: ""
         disabled: false
     authentication:
