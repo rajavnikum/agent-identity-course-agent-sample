@@ -929,7 +929,7 @@ curl --request PUT "$TENANT/v1.0/Agents/$AGENT_ID" \
   --header "Authorization: Bearer $ADMIN_ACCESS_TOKEN" \
   --header "Accept: application/scim+json" \
   --header "Content-Type: application/scim+json" \
-  --data @/curl/payloads/course-agent-suspend.json
+  --data @curl/payloads/course-agent-suspend.json
 > The Agent OAuth application remains associated with the Agent identity. 
 
 ## What to look for in the logs
