@@ -532,29 +532,21 @@ Applications → Authorization detail types
 ### Using the IBM Verify administration console
 
 1. Open the **IBM Verify administration console**.
-
 2. Go to **Applications → Authorization detail types**.
-
 3. Click **Create**.
-
 4. Select **Standard**.
-
 5. In **Name**, enter:
 
    ```text
    urn:ibm:demo:verify:agent_action
-
 6. In Schema, paste the contents of:
 
    payloads/agent_action_adt_schema.json
-
 7. Keep the remaining settings at their default values unless otherwise specified in this tutorial.
-
 8. Under Consent configuration, enter:
 
-   $OIDC_AUTHDETAIL_LABEL_STDTITLE$<br/>
+     $OIDC_AUTHDETAIL_LABEL_STDTITLE$<br/>
     $OIDC_AUTHDETAIL_LABEL_STDID$ {ad.identifier}
-
 9. Click Create.
 
 
