@@ -214,22 +214,27 @@ Do not select unrelated administrative entitlements. They are not required by th
 After creating the API client, record its client ID and client secret:
 
 ```bash
+export TENANT="https://<your-tenant>"
 export VERIFY_ADMIN_CLIENT_ID="<admin-client-id>"
 export VERIFY_ADMIN_CLIENT_SECRET="<admin-client-secret>"
 ```
 
-
-Obtain the setup token:
+Obtain an administrative access token:
 
 ```bash
-curl --request POST "https://<tenant>/oauth2/token" \
+curl --request POST "$TENANT/oauth2/token" \
   --header "Content-Type: application/x-www-form-urlencoded" \
   --data-urlencode "grant_type=client_credentials" \
-  --data-urlencode "client_id=<admin-client-id>" \
-  --data-urlencode "client_secret=<admin-client-secret>"
+  --data-urlencode "client_id=$VERIFY_ADMIN_CLIENT_ID" \
+  --data-urlencode "client_secret=$VERIFY_ADMIN_CLIENT_SECRET"
 ```
 
-Save the returned `access_token` as `ADMIN_ACCESS_TOKEN`.
+Copy the `access_token` value from the response and set:
+
+```bash
+export ADMIN_ACCESS_TOKEN="<access-token>"
+```
+
 
 ## Step 2 — Create the agent OAuth client using DCR
 
