@@ -544,7 +544,7 @@ Applications → Authorization detail types
    payloads/agent_action_adt_schema.json
 7. Keep the remaining settings at their default values unless otherwise specified in this tutorial.
 8. Under Consent configuration, enter:
-
+ ```text
      $OIDC_AUTHDETAIL_LABEL_STDTITLE$<br/>
     $OIDC_AUTHDETAIL_LABEL_STDID$ {ad.identifier}
 9. Click Create.
