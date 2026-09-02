@@ -235,7 +235,6 @@ Copy the `access_token` value from the response and set:
 export ADMIN_ACCESS_TOKEN="<access-token>"
 ```
 
-
 ## Step 2 — Create the Agent OAuth application
 
 The Course Agent Application needs OAuth credentials that it can use at runtime to obtain an actor access token from IBM Verify.
@@ -265,18 +264,6 @@ export ACTOR_CLIENT_SECRET="<client-secret>"
 ```
 These credentials belong to the agent's OAuth application and are used only to obtain the actor token at runtime.
 
-### Verify the application in IBM Verify
-
-After DCR completes:
-
-1. Open the IBM Verify administration console.
-2. Go to Applications.
-3. 3. Locate the application created by the DCR request. The supplied DCR payload creates it with the name `UC1 Course Conversational Agent`.
-4. Open the application and verify that Client Credentials is enabled and that the expected agent.run scope is configured.
-5. Set the access token format to JWT
-6. Save the application after making the change.
-
-The sample requires a JWT actor token because the token is subsequently supplied to IBM Verify as the actor_token during OAuth 2.0 Token Exchange.
 
 ### Postman
 
@@ -294,6 +281,7 @@ The sample requires a JWT actor token because the token is subsequently supplied
 4. Copy the access token to `admin_access_token`.
 5. Run **02 DCR Create Actor Client**.
 6. Copy the returned client ID and secret into the environment.
+
 
 ## Step 3 — Onboard the conversational agent and associate the actor client
 
@@ -334,7 +322,7 @@ The sample payload uses:
     "urn:ietf:params:scim:schemas:core:ibm:2.0:Agent"
   ],
   "displayName": "UC1 Course Conversational Agents",
-  "description": "Conversational AI agent with direct protected course ssstools",
+  "description": "Conversational AI agent with direct protected course tools",
   "permissions": [],
   "tags": [
     "course-agent",
@@ -452,22 +440,7 @@ payloads/agent_action_adt_schema.json
 
 A runtime request contains operation information similar to:
 
-```json
-[
-  {
-    "type": "urn:ibm:demo:verify:agent_action",
-    "operationDetails": {
-      "creator": "<actor-client-id>",
-      "affectedPerson": "<target-subject>",
-      "loggedInSubject": "<logged-in-subject>",
-      "action": "enroll_course",
-      "targetSystem": "course-api",
-      "resource": "courses",
-      "courseId": "SEC-301"
-    }
-  }
-]
-```
+
 
 Register the schema and configure the IBM Verify criteria .
 
