@@ -1010,4 +1010,3 @@ These diagnostics exist for the tutorial. Do not expose raw token claims or auth
 - [Introspect a token](https://docs.verify.ibm.com/verify/reference/post_oauth2-introspect)
 - [Create an API client](https://docs.verify.ibm.com/verify/docs/support-developers-create-api-client)
 
-> The Agent Registry API used by this sample is also supplied in the API collections from the source package. If the Agent Registry capability or API is not enabled in your tenant/release, use the IBM Verify Agent Registry UI available in your environment and capture the values requested by this guide.
