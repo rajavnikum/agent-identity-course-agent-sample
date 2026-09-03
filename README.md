@@ -729,6 +729,7 @@ requested_token_type = urn:ietf:params:oauth:token-type:access_token
 scope                = course.read course.enroll
 audience             = course-api
 authorization_details type = urn:ibm:demo:verify:agent_action
+```
 
 After completing the Token Exchange client ID configuration, record:
 
