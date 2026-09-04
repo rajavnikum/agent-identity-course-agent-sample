@@ -1175,37 +1175,6 @@ These records show how the governed Agent participated in runtime authentication
 
 > The Agent Registry `Entity ID` is the stable governed identity of the Agent. OAuth client IDs, token identifiers, transaction identifiers, and correlation identifiers describe particular credentials or runtime activity and should not be treated as replacements for the Agent's governed Entity ID.
 
-## What to look for in the logs
-
-The sample prints a diagnostic token-exchange request with secrets and most token content masked/truncated. Look for:
-
-```text
-===== TOKEN EXCHANGE REQUEST =====
-```
-
-Verify:
-
-```text
-subject_token       -> human token
-actor_token         -> agent token
-audience            -> course-api
-authorization_details.operationDetails.creator -> actor client ID
-authorization_details.operationDetails.action  -> selected course action
-```
-
-Then inspect the JSON returned by `/chat` in the browser developer tools or HTTP client. The `diagnostic` object includes:
-
-```text
-subject_claims
-actor_token_claims
-delegated_token_claims
-authorization_details
-api_result.validation
-```
-
-These diagnostics exist for the tutorial. Do not expose raw token claims or authorization internals to untrusted users in a production UI.
-
-
 
 ## IBM Verify documentation references
 
