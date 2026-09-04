@@ -970,6 +970,211 @@ Show me the available courses.
 It should fail.
 
 
+## Audit the Human User, Agent, and delegated runtime activity
+
+After completing the runtime tests, IBM Verify reporting can be used to inspect how the Human User, Agent, and Token Exchange activity are represented.
+
+This is useful because the sample uses several related identities:
+
+- the **Human User** authenticates through the subject OIDC application;
+- the **Course Agent Application** authenticates using the Agent OAuth application's client credentials;
+- IBM Verify associates that OAuth application with the governed **Agent Registry entity**;
+- the **Token Exchange application** requests the delegated access token used to call the Course API.
+
+These records provide an operational view of the identities that participated in the delegated authorization flow.
+
+### 1. Inspect the Human User authentication event
+
+In the IBM Verify administration console:
+
+1. Go to **Reporting & diagnostics → Reports**
+2. Open the token or SSO activity report for the time when the UC1 test was executed.
+3. Locate the event for:
+
+   ```text
+   UC1_subject_token
+   ```
+
+The event should identify the signed-in Human User and show values similar to:
+
+```text
+Event type:     SSO
+Client name:    UC1_subject_token
+Grant type:     authorization_code
+User name:      <signed-in-user>
+Token type:     access_token id_token
+```
+
+This event represents the Human User authenticating to the Course Agent Application using Authorization Code + PKCE.
+
+Conceptually:
+
+```text
+Human User
+    |
+    | Authorization Code + PKCE
+    v
+IBM Verify
+    |
+    v
+UC1_subject_token
+```
+
+---
+
+### 2. Inspect the Agent runtime authentication event
+
+Locate the event for:
+
+```text
+UC1 Course Conversational Agent
+```
+
+The event should show values similar to:
+
+```text
+Event type:     Token
+Grant type:     client_credentials
+Granted scope:  agent.run
+Token type:     access_token
+Entity type:    agent
+Entity ID:      <Agent Registry ID>
+```
+
+The important values are:
+
+```text
+Entity type = agent
+Entity ID   = <AGENT_ID>
+```
+
+`Entity ID` identifies the governed Agent Registry record created earlier in this tutorial.
+
+This demonstrates the distinction between the OAuth runtime identity and the governed Agent identity:
+
+```text
+Agent OAuth application
+        |
+        | client_id / client credentials
+        v
+Actor access token
+        |
+        | associated by IBM Verify
+        v
+Agent Registry entity
+        |
+        | Entity type = agent
+        | Entity ID   = AGENT_ID
+        v
+Governed AI Agent
+```
+
+The OAuth client ID can be rotated or replaced as runtime credentials evolve, while the Agent Registry record provides the governed identity representing the AI agent.
+
+---
+
+### 3. Inspect the Token Exchange event
+
+Locate the event for:
+
+```text
+UC1 Course Agent Token Exchange
+```
+
+The event should identify the Token Exchange grant:
+
+```text
+Grant type:
+urn:ietf:params:oauth:grant-type:token-exchange
+```
+
+and show the delegated scopes issued by IBM Verify.
+
+For example:
+
+```text
+Client name:    UC1 Course Agent Token Exchange
+Grant type:     urn:ietf:params:oauth:grant-type:token-exchange
+Granted scope:  course.read course.enroll
+Token type:     access_token
+Action:         Issued
+Result:         Success
+```
+
+For an enrollment operation, the expected least-privileged scope is:
+
+```text
+course.read course.enroll
+```
+
+The Token Exchange event therefore represents the runtime delegated authorization performed after IBM Verify has received both the Human User subject token and the Agent actor token.
+
+---
+
+### Understanding the complete audit trail
+
+The three records represent different stages of the same agentic authorization scenario:
+
+```text
+Human User
+   |
+   | Authorization Code + PKCE
+   v
+Subject authentication
+UC1_subject_token
+   |
+   | subject access token
+   |
+   +-----------------------------+
+                                 |
+Agent OAuth application          |
+   |                             |
+   | Client Credentials          |
+   v                             |
+Actor access token               |
+   |                             |
+   | Entity type = agent         |
+   | Entity ID = AGENT_ID        |
+   |                             |
+   +-------------+---------------+
+                 |
+                 v
+        OAuth 2.0 Token Exchange
+        UC1 Course Agent Token Exchange
+                 |
+                 v
+        Delegated access token
+                 |
+                 v
+              Course API
+```
+
+This gives administrators two complementary views of the Agent:
+
+**Governance identity**
+
+```text
+Agent Registry
+Entity type = agent
+Entity ID   = AGENT_ID
+```
+
+The Agent Registry record represents the governed AI Agent and contains its lifecycle and OAuth-client association.
+
+**Runtime identity and activity**
+
+```text
+Agent OAuth application
+client_credentials
+actor access token
+Token Exchange
+delegated access token
+```
+
+These records show how the governed Agent participated in runtime authentication and delegated authorization.
+
+> The Agent Registry `Entity ID` is the stable governed identity of the Agent. OAuth client IDs, token identifiers, transaction identifiers, and correlation identifiers describe particular credentials or runtime activity and should not be treated as replacements for the Agent's governed Entity ID.
+
 ## What to look for in the logs
 
 The sample prints a diagnostic token-exchange request with secrets and most token content masked/truncated. Look for:
