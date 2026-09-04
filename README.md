@@ -970,7 +970,7 @@ Show me the available courses.
 It should fail.
 
 
-## Audit the Human User, Agent, and delegated runtime activity
+## Step 10 — Audit the Human User, Agent, and delegated runtime activity
 
 After completing the runtime tests, IBM Verify reporting can be used to inspect how the Human User, Agent, and Token Exchange activity are represented.
 
