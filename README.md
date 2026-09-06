@@ -730,20 +730,21 @@ In the IBM Verify administration console:
 
    ```text
    UC1 Course Agent Token Exchange
-4.  Select grant type  the **Token Exchange**.
-
-5. Configure the application with the following values:
+    ```
+4. Under **General settings** fill the **Company name**.
+5. Under **Sign-on configuration** Select grant type  the **Token Exchange**.
+6. Configure the application with the following values:
 
 | Setting | Sample value | Why it is required |
 |---|---|---|
-| Grant type | OAuth 2.0 Token Exchange | Enables RFC 8693 token exchange. |
-| Subject token type | `urn:ietf:params:oauth:token-type:access_token` | The human user's access token is supplied as the subject token. |
-| Actor token type | `urn:ietf:params:oauth:token-type:access_token` | The agent access token is supplied as the actor token. |
-| Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |
-| Audience | `course-api` | Binds the delegated token to the protected Course API. |
-| Authorization Details Type | `urn:ibm:demo:verify:agent_action` | Allows IBM Verify to evaluate the business operation described in Step 5. |
+| Access token format | JWT | Allows the sample Course API to validate the delegated token claims used by the demonstration. |Under **Token Settings**|
+| Audience | `course-api` | Binds the delegated token to the protected Course API. |Under **Token Settings** |
+| Subject token type | `urn:ietf:params:oauth:token-type:access_token` | The human user's access token is supplied as the subject token. |Under **Token Exchange** |
+| Actor token type | `urn:ietf:params:oauth:token-type:access_token` | The agent access token is supplied as the actor token. |Under **Token Exchange** |
+| Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |Under **Token Exchange** |Under **Custom scopes and API access** |
 | Scopes | `course.read course.enroll` | Defines the course authorities used by the current sample. |
-| Access token format | JWT | Allows the sample Course API to validate the delegated token claims used by the demonstration. |
+| Authorization Details Type | `urn:ibm:demo:verify:agent_action` | Allows IBM Verify to evaluate the business operation described in Step 5. |Under **Custom scopes and API access** |
+
 
 ### Delegation validation
 
