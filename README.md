@@ -851,12 +851,13 @@ For the first successful run, use:
 USE_LLM=false
 ```
 
-After the OAuth flow is working, enable Gemini:
+**After the OAuth flow is working, enable Gemini:**
 
 ```dotenv
 USE_LLM=true
 GEMINI_API_KEY=<your-key>
 ```
+> **Note:** Gemini model availability can vary by account and over time. If `gemini-2.5-flash` is not available for your API key, set `GEMINI_MODEL` to a model that is currently enabled for your account.
 
 ## Step 8 — Install and run
 
@@ -917,6 +918,7 @@ Expected security result:
 
 ### Test B — Enroll the signed-in user
 
+**Make sure Gemini is enabled, before running usecase**
 Prompt:
 
 ```text
@@ -940,6 +942,7 @@ Expected security result:
 - Course API permits the operation when all validation succeeds.
 
 ### Test C — List the user's enrolled courses
+**Make sure Gemini is enabled, before running usecase**
 
 Prompt:
 
