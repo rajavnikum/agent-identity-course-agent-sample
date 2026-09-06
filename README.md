@@ -735,10 +735,10 @@ In the IBM Verify administration console:
 5. Under **Sign-on configuration** Select grant type  the **Token Exchange**.
 6. Configure the application with the following values:
 
-| Setting | Sample value | Why it is required |
-|---|---|---|
-| Access token format | JWT | Allows the sample Course API to validate the delegated token claims used by the demonstration. |Under **Token Settings**|
-| Audience | `course-api` | Binds the delegated token to the protected Course API. |Under **Token Settings** |
+| Setting | Sample value | Why it is required |Where it is set |
+|---|---|---|---|
+| Access token format | JWT | Allows the sample Course API to validate the delegated token claims used by the demonstration.|Under **Token Settings**|
+| Audience | `course-api` | Binds the delegated token to the protected Course API.|Under **Token Settings** |
 | Subject token type | `urn:ietf:params:oauth:token-type:access_token` | The human user's access token is supplied as the subject token. |Under **Token Exchange** |
 | Actor token type | `urn:ietf:params:oauth:token-type:access_token` | The agent access token is supplied as the actor token. |Under **Token Exchange** |
 | Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |Under **Token Exchange** |Under **Custom scopes and API access** |
