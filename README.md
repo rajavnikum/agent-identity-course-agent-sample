@@ -742,7 +742,7 @@ In the IBM Verify administration console:
 | Subject token type | `urn:ietf:params:oauth:token-type:access_token` | The human user's access token is supplied as the subject token. |Under **Token Exchange** |
 | Actor token type | `urn:ietf:params:oauth:token-type:access_token` | The agent access token is supplied as the actor token. |Under **Token Exchange** |
 | Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |Under **Token Exchange** |Under **Custom scopes and API access** |
-| Scopes | `course.read course.enroll` | Defines the course authorities used by the current sample. |
+| Scopes | `course.read course.enroll` | Defines the course authorities used by the current sample. |Under **Custom scopes and API access** |
 | Authorization Details Type | `urn:ibm:demo:verify:agent_action` | Allows IBM Verify to evaluate the business operation described in Step 5. |Under **Custom scopes and API access** |
 
 
