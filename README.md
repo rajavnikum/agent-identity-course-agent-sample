@@ -919,6 +919,7 @@ Expected security result:
 ### Test B — Enroll the signed-in user
 
 **Make sure Gemini is enabled, before running usecase**
+
 Prompt:
 
 ```text
@@ -957,6 +958,7 @@ list_enrolled_courses
 ```
 
 ### Test D — Attempt cross-user access
+**Make sure Gemini is enabled, before running usecase**
 
 Prompt:
 
