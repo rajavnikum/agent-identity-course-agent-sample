@@ -762,6 +762,22 @@ This prevents an arbitrary OAuth client from presenting a user's subject token a
 
 The Authorization Details Type configured in Step 5 provides the additional operation context used during the authorization decision.
 
+
+### Least privilege at token issuance
+
+The Token Exchange application is configured to **allow** both `course.read` and `course.enroll`, but the Course Agent Application does not request both scopes for every operation.
+
+Before Token Exchange, the application resolves the selected action to a single minimum scope in `action_scopes.py`:
+
+| Agent action | Scope requested from IBM Verify |
+|---|---|
+| `list_available_courses` | `course.read` |
+| `list_enrolled_courses` | `course.read` |
+| `enroll_course` | `course.enroll` |
+
+Any action that is not present in this mapping is rejected before a Token Exchange request is sent. This implements least privilege **at token issuance time** rather than relying only on Course API enforcement after the token has already been issued.
+
+
 ### Token Exchange request
 
 At runtime, the sample sends a request containing:
