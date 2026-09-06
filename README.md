@@ -539,6 +539,7 @@ Configure the application as follows:
 | Access token format | JWT | The Course Agent Application reads identity claims from the subject access token locally when establishing the logged-in subject for this sample. JWT is therefore used by this sample implementation so those claims can be extracted locally. OAuth 2.0 Token Exchange itself does not require the subject access token to be JWT-formatted; an opaque access token can instead have its claims resolved through introspection. |
 | Scopes | `openid profile email course.read course.enroll` | Requests the identity and course permissions required by the sample. |
 
+
 From the application, record which will be used in step 7:
 
 ```text
@@ -591,6 +592,29 @@ The custom rule produces the value of the `may_act` attribute. Conceptually, the
 ```
 
 > `ACTOR_CLIENT_ID` is the OAuth client ID of the **Agent OAuth application** created in Step 2. It is not the Agent Registry ID created in Step 3.
+
+### Application entitlements
+
+After completing the Sign-on configuration, configure who is allowed to access the application.
+
+1. Open the **Entitlements** tab for `UC1_subject_token`.
+2. Select:
+
+   **All users are entitled to this application**
+
+3. Save the configuration.
+
+This tutorial uses **All users are entitled to this application** so that the test Human User can sign in to the Course Agent Application without requiring an additional user or group assignment.
+
+> **Why is this required?**  
+
+> Creating the OIDC application and enabling the Authorization Code grant does not by itself grant users access to the application. IBM Verify also evaluates the application's entitlement configuration during sign-in. If the signed-in user is not entitled to the application, authentication fails with an error similar to:
+>
+> ```text
+> Only entitled users can single sign-on to the application.
+> ```
+>
+> For this tutorial, allowing all users keeps the setup simple. In a production deployment, access should normally be restricted to the users or groups that are authorized to use the application.
 
 
 ## Step 5 — Create the Authorization Details Type
