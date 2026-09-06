@@ -712,7 +712,7 @@ Applications → Authorization detail types
     $OIDC_AUTHDETAIL_LABEL_STDID$ {ad.identifier}
     ```
     
->This is consent-display text for an Authorization Detail. It does not control authorization or token issuance. For this demo, the default IBM Verify consent-display template can be left unchanged as consent presentation is not being evaluated. However, if you want the consent screen to show information that is meaningful for this UC1 flow, replace the default {ad.identifier} placeholder with a property that exists in the authorization detail, such as {ad.courseId}
+  > This is consent-display text for an Authorization Detail. It does not control authorization or token issuance. For this demo, the default IBM Verify consent-display template can be left unchanged if consent presentation is not being evaluated. However, if you want the consent screen to show information that is meaningful for this UC1 flow, replace the default {ad.identifier} placeholder with a property that exists in the authorization detail, such as {ad.courseId}
 
 9.   Click Create
 
