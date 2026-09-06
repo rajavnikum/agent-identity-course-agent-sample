@@ -37,8 +37,7 @@ class Settings:
     # STS client - OAuth 2.0 Token Exchange client
     sts_client_id: str = os.getenv("STS_CLIENT_ID", "")
     sts_client_secret: str = os.getenv("STS_CLIENT_SECRET", "")
-    sts_requested_scope: str = os.getenv("STS_REQUESTED_SCOPE", "course.read course.enroll")
-    
+
 
     # Verify Directory / SCIM lookup client.
     # Use a separate API/management client with permission to read users.

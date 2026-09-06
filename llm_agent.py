@@ -27,11 +27,17 @@ class AgentDecision:
     target_subject: Optional[str] = "self"
 
 
+# These are the only actions that are allowed to proceed to scope resolution
+# and OAuth 2.0 Token Exchange.
 ALLOWED_ACTIONS = {
     "list_available_courses",
     "enroll_course",
     "list_enrolled_courses",
 }
+
+# The classifier can explicitly return this value for requests outside the
+# agent's supported capability set. It is intentionally NOT in ALLOWED_ACTIONS.
+UNSUPPORTED_ACTION = "unsupported_action"
 
 COURSE_MAP = {
     "advanced security training": "SEC-301",
@@ -48,15 +54,25 @@ SYSTEM_INSTRUCTION = """
 You are an intent classifier for a course-booking demo agent.
 Return ONLY valid JSON. Do not return markdown.
 
-Allowed action values only:
+Allowed classification values:
 1. list_available_courses
 2. enroll_course
 3. list_enrolled_courses
+4. unsupported_action
 
 Meaning:
 - list_available_courses: user asks what courses are available/catalog/can enroll in.
 - enroll_course: user asks to enroll/book/register/join a course.
 - list_enrolled_courses: user asks what courses are already taken/enrolled/completed by self or someone else.
+- unsupported_action: user asks for any operation outside the three supported course actions.
+
+You MUST use unsupported_action for requests such as:
+- delete or erase course history
+- remove records
+- modify or update course history
+- cancel/delete course records
+- administrative operations
+- any other action outside the three supported course actions
 
 Target subject rules:
 - For "my", "me", "mine", "myself" return target_subject="self".
@@ -66,6 +82,7 @@ Target subject rules:
 Course rules:
 - For list_available_courses and list_enrolled_courses, course_id="ALL".
 - For enroll_course, identify course_id when possible.
+- For unsupported_action, course_id="ALL".
 - advanced security training / advanced security operations => SEC-301.
 - AI productivity basics => GEN-101.
 - identity governance for managers => GOV-301.
@@ -89,6 +106,12 @@ User: Which courses is taken by rick?
 
 User: Show scott courses
 {"action":"list_enrolled_courses","course_id":"ALL","target_subject":"scott","reason":"User asked for Scott's enrolled courses."}
+
+User: Please delete my course history
+{"action":"unsupported_action","course_id":"ALL","target_subject":"self","reason":"Delete operations are not supported by this Course Agent."}
+
+User: Remove my enrollment history
+{"action":"unsupported_action","course_id":"ALL","target_subject":"self","reason":"Removing course history is not a supported operation."}
 """
 
 _client = None
@@ -142,7 +165,11 @@ def _extract_target_hint_without_llm(message: str) -> str:
             return candidate
 
     # "show scott courses", "list rick courses"
-    m = re.search(r"\b(?:show|list|display|view)\s+([A-Za-z0-9._@-]+)\s+(?:course|courses|enrollment|enrollments)\b", text, re.IGNORECASE)
+    m = re.search(
+        r"\b(?:show|list|display|view)\s+([A-Za-z0-9._@-]+)\s+(?:course|courses|enrollment|enrollments)\b",
+        text,
+        re.IGNORECASE,
+    )
     if m:
         candidate = m.group(1).strip(" ?.,!\r\n\t")
         if candidate.lower() not in {"available", "catalog", "my", "me", "enrolled"}:
@@ -152,15 +179,50 @@ def _extract_target_hint_without_llm(message: str) -> str:
 
 
 def fallback_decide(message: str) -> AgentDecision:
+    """
+    Deterministic, fail-closed classifier.
+
+    Important security behavior:
+    - destructive/unsupported requests return unsupported_action;
+    - unknown requests return unsupported_action;
+    - unsupported requests never get silently converted to a read operation.
+    """
     text = message.lower()
     target_subject = _extract_target_hint_without_llm(message)
 
-    if any(w in text for w in ["enroll", "register", "join", "book"]):
+    # Fail closed for destructive or otherwise unsupported operations.
+    unsupported_patterns = [
+        r"\bdelete\b",
+        r"\bremove\b",
+        r"\berase\b",
+        r"\bpurge\b",
+        r"\bdestroy\b",
+        r"\bmodify\b",
+        r"\bupdate\b",
+        r"\bcancel\b",
+    ]
+
+    if any(re.search(pattern, text) for pattern in unsupported_patterns):
         return AgentDecision(
-            action="enroll_course",
-            course_id=_extract_course_id(message),
+            action=UNSUPPORTED_ACTION,
+            course_id="ALL",
             target_subject=target_subject,
-            reason="Deterministic fallback: enrollment request.",
+            reason="Deterministic fallback: requested operation is not supported.",
+        )
+
+    # Check read-of-existing-enrollment intent BEFORE enroll intent.
+    # Using word boundaries prevents 'enrolled' from being treated as 'enroll'.
+    if (
+        re.search(r"\b(enrolled|taken|completed)\b", text)
+        or re.search(r"\bmy\s+courses\b", text)
+        or re.search(r"\bcourse\s+history\b", text)
+        or re.search(r"\benrollment\s+history\b", text)
+    ):
+        return AgentDecision(
+            action="list_enrolled_courses",
+            course_id="ALL",
+            target_subject=target_subject,
+            reason="Deterministic fallback: user asked for enrolled/taken courses.",
         )
 
     if (
@@ -169,6 +231,7 @@ def fallback_decide(message: str) -> AgentDecision:
         or "to enroll" in text
         or "can i enroll" in text
         or "courses are there" in text
+        or "what courses" in text
     ):
         return AgentDecision(
             action="list_available_courses",
@@ -177,19 +240,20 @@ def fallback_decide(message: str) -> AgentDecision:
             reason="Deterministic fallback: user asked for courses available to enroll.",
         )
 
-    if any(w in text for w in ["taken", "enrolled", "completed", "my courses", "show scott courses", "courses"]):
+    if re.search(r"\b(enroll|register|join|book)\b", text):
         return AgentDecision(
-            action="list_enrolled_courses",
-            course_id="ALL",
+            action="enroll_course",
+            course_id=_extract_course_id(message),
             target_subject=target_subject,
-            reason="Deterministic fallback: user asked for enrolled/taken courses.",
+            reason="Deterministic fallback: enrollment request.",
         )
 
+    # Unknown intent must fail closed. Do not default to list_available_courses.
     return AgentDecision(
-        action="list_available_courses",
+        action=UNSUPPORTED_ACTION,
         course_id="ALL",
-        target_subject="self",
-        reason="Deterministic fallback: default to available course catalog.",
+        target_subject=target_subject,
+        reason="Deterministic fallback: request did not match a supported action.",
     )
 
 
@@ -222,8 +286,19 @@ def decide_action(message: str) -> AgentDecision:
         target_subject = data.get("target_subject", "self") or "self"
         reason = data.get("reason", "Intent classified by LLM")
 
+        # An explicit unsupported_action is a valid security decision.
+        # Do NOT throw it into the fallback classifier, otherwise a delete request
+        # could be converted to a permitted read operation.
+        if action == UNSUPPORTED_ACTION:
+            return AgentDecision(
+                action=UNSUPPORTED_ACTION,
+                course_id="ALL",
+                target_subject=target_subject,
+                reason=reason or "Requested operation is not supported.",
+            )
+
         if action not in ALLOWED_ACTIONS:
-            raise ValueError(f"LLM returned unsupported action: {action}")
+            raise ValueError(f"LLM returned unknown action: {action}")
 
         if action in {"list_available_courses", "list_enrolled_courses"}:
             course_id = "ALL"
@@ -239,6 +314,11 @@ def decide_action(message: str) -> AgentDecision:
         )
 
     except Exception as exc:
+        # Fallback is only for an LLM/service/parsing failure.
+        # The fallback itself is fail closed for unknown/unsupported requests.
         fallback = fallback_decide(message)
-        fallback.reason = f"LLM classification failed; fallback used. Error: {str(exc)}"
+        fallback.reason = (
+            f"LLM classification failed; deterministic fallback used. "
+            f"Error: {str(exc)}. {fallback.reason}"
+        )
         return fallback
