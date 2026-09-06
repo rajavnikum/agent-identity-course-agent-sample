@@ -30,9 +30,11 @@ def create_pkce_pair():
 
 def build_login_url(request: Request) -> str:
     state = secrets.token_urlsafe(24)
+    nonce = secrets.token_urlsafe(24)
     code_verifier, code_challenge = create_pkce_pair()
 
     request.session["oauth_state"] = state
+    request.session["oauth_nonce"] = nonce
     request.session["code_verifier"] = code_verifier
 
     params = {
@@ -41,6 +43,7 @@ def build_login_url(request: Request) -> str:
         "scope": settings.subject_scopes,
         "redirect_uri": settings.subject_redirect_uri,
         "state": state,
+        "nonce": nonce,
         "code_challenge": code_challenge,
         "code_challenge_method": "S256",
     }
@@ -78,9 +81,7 @@ async def exchange_auth_code(request: Request, code: str, state: str) -> dict:
             f"Subject token exchange failed: {response.status_code} {response.text}"
         )
 
-    tokens = response.json()
-    request.session["subject_tokens"] = tokens
-    return tokens
+    return response.json()
 
 
 async def get_actor_token() -> dict:

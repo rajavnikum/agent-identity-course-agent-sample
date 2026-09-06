@@ -14,7 +14,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
 from config import settings
-from token_utils import decode_unverified
+from token_utils import decode_unverified, verify_id_token
 from rar_builder import build_agent_authorization_details
 from verify_oauth import (
     build_login_url,
@@ -75,17 +75,18 @@ async def resolve_target_subject(
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     subject_tokens = request.session.get("subject_tokens")
-    claims = {}
-
-    if subject_tokens and subject_tokens.get("access_token"):
-        claims = decode_unverified(subject_tokens["access_token"])
+    subject_identity = request.session.get("subject_identity") or {}
 
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
-            "logged_in": subject_tokens is not None,
-            "claims": claims,
+            "logged_in": bool(
+                subject_tokens
+                and subject_tokens.get("access_token")
+                and subject_identity
+            ),
+            "claims": subject_identity,
             "llm_enabled": settings.use_llm,
             "gemini_model": settings.gemini_model,
         },
@@ -113,7 +114,29 @@ async def callback(
 
     try:
         tokens = await exchange_auth_code(request, code, state)
+
+        id_token = tokens.get("id_token")
+        if not id_token:
+            raise ValueError("IBM Verify token response did not contain an id_token")
+
+        expected_nonce = request.session.get("oauth_nonce")
+        if not expected_nonce:
+            raise ValueError("Missing OIDC nonce in session")
+
+        id_claims = verify_id_token(
+            id_token,
+            expected_nonce=expected_nonce,
+        )
+
+        # Keep OAuth tokens separate from the authenticated user's identity.
+        # The access token is used only as the subject_token during Token Exchange.
         request.session["subject_tokens"] = tokens
+        request.session["subject_identity"] = id_claims
+
+        request.session.pop("oauth_state", None)
+        request.session.pop("oauth_nonce", None)
+        request.session.pop("code_verifier", None)
+
         return RedirectResponse("/")
     except Exception as exc:
         traceback.print_exc()
@@ -179,21 +202,34 @@ def build_answer(last_result: dict) -> str:
 @app.post("/chat")
 async def chat(request: Request, message: str = Form(...)):
     subject_tokens = request.session.get("subject_tokens")
+    id_claims = request.session.get("subject_identity") or {}
 
-    if not subject_tokens or not subject_tokens.get("access_token"):
-        return JSONResponse(status_code=401, content={"error": "Not logged in. Please login with IBM Verify first."})
+    if (
+        not subject_tokens
+        or not subject_tokens.get("access_token")
+        or not id_claims
+    ):
+        return JSONResponse(
+            status_code=401,
+            content={"error": "Not logged in. Please login with IBM Verify first."},
+        )
 
+    # The OAuth access token is not used to establish the logged-in user's identity.
+    # It is kept unchanged and supplied only as the subject_token during Token Exchange.
     subject_token = subject_tokens["access_token"]
-    subject_claims = decode_unverified(subject_token)
 
-    if subject_claims.get("exp") and int(subject_claims["exp"]) < int(time.time()):
+    # The authenticated Human User is established from the validated OIDC ID token.
+    if id_claims.get("exp") and int(id_claims["exp"]) < int(time.time()):
         request.session.clear()
-        return JSONResponse(status_code=401, content={"error": "Subject token expired. Please login again with IBM Verify."})
+        return JSONResponse(
+            status_code=401,
+            content={"error": "Login session expired. Please login again with IBM Verify."},
+        )
 
     logged_in_subject = (
-        subject_claims.get("preferred_username")
-        or subject_claims.get("email")
-        or subject_claims.get("sub")
+        id_claims.get("preferred_username")
+        or id_claims.get("email")
+        or id_claims.get("sub")
         or "unknown-user"
     )
 
@@ -276,7 +312,7 @@ async def chat(request: Request, message: str = Form(...)):
             "requested_subject": target_subject,
             "action": action,
             "authorization_details": authorization_details,
-            "subject_claims": subject_claims,
+            "id_token_claims": id_claims,
             "actor_token_claims": decode_unverified(actor_token),
             "delegated_token_claims": decode_unverified(delegated_token),
             "api_result": api_result,
