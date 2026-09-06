@@ -561,7 +561,6 @@ This sample uses the OAuth may_act relationship for this validation.
 
    ```json
    {
-     "client_id": "<actor-client-id>",
      "sub": "<actor-client-id>"
    }
    ```
@@ -584,10 +583,31 @@ The custom rule produces the value of the `may_act` attribute. Conceptually, the
 ```json
 {
   "may_act": {
-    "client_id": "<actor-client-id>",
     "sub": "<actor-client-id>"
   }
 }
+```
+IBM Verify allows `may_act` to contain one or more properties. If more than one property is included, every property must match the corresponding property in the actor token.
+
+UC1 therefore uses only `sub`, because it is sufficient to identify the permitted actor and avoids unnecessarily requiring two equivalent claim comparisons.
+
+Conceptually:
+
+```text
+Subject access token
+      |
+      | may_act.sub
+      |   =
+      | ACTOR_CLIENT_ID
+      v
+IBM Verify Token Exchange
+      ^
+      |
+      | actor_token.sub
+      |   =
+      | ACTOR_CLIENT_ID
+      |
+Actor access token
 ```
 
 > `ACTOR_CLIENT_ID` is the OAuth client ID of the **Agent OAuth application** created in Step 2. It is not the Agent Registry ID created in Step 3.
