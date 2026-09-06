@@ -700,6 +700,7 @@ Applications → Authorization detail types
 
    ```text
    urn:ibm:demo:verify:agent_action
+    ```
 6. In Schema, paste the contents of:
 
    payloads/agent_action_adt_schema.json
@@ -709,6 +710,10 @@ Applications → Authorization detail types
     ```text
      $OIDC_AUTHDETAIL_LABEL_STDTITLE$<br/>
     $OIDC_AUTHDETAIL_LABEL_STDID$ {ad.identifier}
+    ```
+    
+>This is consent-display text for an Authorization Detail. It does not control authorization or token issuance. For this demo, the default IBM Verify consent-display template can be left unchanged if consent presentation is not being evaluated. However, if you want the consent screen to show information that is meaningful for this UC1 flow, replace the default {ad.identifier} placeholder with a property that exists in the authorization detail, such as {ad.courseId}
+
 9.   Click Create
 
 
