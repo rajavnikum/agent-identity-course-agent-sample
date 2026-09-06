@@ -536,7 +536,6 @@ Configure the application as follows:
 | Grant type | Authorization Code | Authenticates the Human User through the browser and returns an authorization code to the Course Agent Application. |
 | PKCE | Required | Protects the Authorization Code flow against interception of the authorization code. |
 | Redirect URI | `http://localhost:8000/callback` | Returns the browser to the Course Agent Application after successful authentication. |
-| Access token format | JWT | The Course Agent Application reads identity claims from the subject access token locally when establishing the logged-in subject for this sample. JWT is therefore used by this sample implementation so those claims can be extracted locally. OAuth 2.0 Token Exchange itself does not require the subject access token to be JWT-formatted; an opaque access token can instead have its claims resolved through introspection. |
 | Scopes | `openid profile email course.read course.enroll` | Requests the identity and course permissions required by the sample. |
 
 
