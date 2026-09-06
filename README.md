@@ -745,6 +745,9 @@ In the IBM Verify administration console:
 | Scopes | `course.read course.enroll` | Defines the course authorities used by the current sample. |Under **Custom scopes and API access** |
 | Authorization Details Type | `urn:ibm:demo:verify:agent_action` | Allows IBM Verify to evaluate the business operation described in Step 5. |Under **Custom scopes and API access** |
 
+7. Open the **Entitlements** tab for `UC1 Course Agent Token Exchange`. Select **All users are entitled to this application**
+
+8. Save the configuration.
 
 ### Delegation validation
 
