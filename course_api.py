@@ -134,7 +134,7 @@ def _validate_scope(claims: Dict[str, Any], action: str) -> Dict[str, Any]:
     required_scope = ACTION_SCOPE_MAP.get(action)
 
     if not required_scope:
-        return {"valid": False, "reason": f"Unsupported action: {action}"}
+        return {"valid": False, "reason": f"Not allowed action: {action}"}
 
     scopes = _scope_list(claims)
 
