@@ -282,7 +282,7 @@ curl --request POST "$TENANT/oauth2/register" \
 
 The supplied DCR payload creates the OAuth application required by this sample with the Client Credentials grant and the agent.run scope.
 
-From the DCR application , record which will be used in step 7:
+After the DCR application is created, open the application in IBM Verify and record the **Entity ID** value shown in the application details. This value will be used in Step 7.
 
 ```bash
 export ACTOR_CLIENT_ID="<actor-client-id>"
@@ -331,7 +331,7 @@ Display name: UC1 Course Conversational Agent
 Description: Conversational AI agent that invokes protected course tools
 Tags: course-agent, direct-tools, conversational-ai
 
-For this tutorial, create Onboard agent through **one** of the following methods:
+For this tutorial,**Onboard agent** through **one** of the following methods:
 
 - cURL
 - Postman
@@ -418,7 +418,9 @@ curl --request PUT "$TENANT/oauth2/register/$ACTOR_CLIENT_ID" \
 * Run **05 - DCR - Associate Actor Client with Agent**.
 
 
-From UI,to associate the OAuth application after the Agent has been created perform the below steps:
+### With IBM Verify User Interface
+
+To associate the OAuth application after the Agent has been created perform the below steps:
 
 1. Open the Agent in the IBM Verify administration console.
 2. Edit the Agent.
