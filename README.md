@@ -282,7 +282,7 @@ curl --request POST "$TENANT/oauth2/register" \
 
 The supplied DCR payload creates the OAuth application required by this sample with the Client Credentials grant and the agent.run scope.
 
-After the DCR application is created, open the application in IBM Verify and record the **Entity ID** value shown in the application details. This value will be used in Step 7.
+After the DCR application is created, open the application in IBM Verify and record the **ACTOR_CLIENT_ID** and **ACTOR_CLIENT_SECRET** and value shown in the application details. This value will be used in Step 7.
 
 ```bash
 export ACTOR_CLIENT_ID="<actor-client-id>"
@@ -513,7 +513,7 @@ The Agent should now:
 - be associated with the Agent OAuth application created in Step 2; and
 - have a status of `ACTIVE`.
 
-For more info on onboarding of Agents,please refer :https://www.ibm.com/docs/en/agent-identity?topic=tasks-onboarding-ai-agent
+For more information about onboarding AI agents, please refer to the IBM documentation: :https://www.ibm.com/docs/en/agent-identity?topic=tasks-onboarding-ai-agent
 
 ## Step 4 — Configure the human subject application
 
@@ -541,7 +541,7 @@ Configure the application as follows:
 | Scopes | `openid profile email course.read course.enroll` | Requests the identity and course permissions required by the sample. |
 
 
-From the application, record which will be used in step 7:
+After the application is created, open the application in IBM Verify and record the **SUBJECT_CLIENT_ID** and **SUBJECT_CLIENT_SECRET** value shown in the application details. This value will be used in Step 7.
 
 ```text
 SUBJECT_CLIENT_ID=<subject-client-id>
@@ -739,7 +739,7 @@ In the IBM Verify administration console:
    UC1 Course Agent Token Exchange
     ```
 4. Under **General settings** fill the **Company name**.
-5. Under **Sign-on configuration** Select grant type  the **Token Exchange**.
+5. Under **Sign-on configuration**, select **Token Exchange** as the grant type.
 6. Configure the application with the following values:
 
 | Setting | Sample value | Why it is required |Where it is set |
@@ -749,7 +749,6 @@ In the IBM Verify administration console:
 | Subject token type | `urn:ietf:params:oauth:token-type:access_token` | The human user's access token is supplied as the subject token. |Under **Token Exchange** |
 | Actor token type | `urn:ietf:params:oauth:token-type:access_token` | The agent access token is supplied as the actor token. |Under **Token Exchange** |
 | Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |Under **Token Exchange** |Under **Custom scopes and API access** |
-| Scopes | `course.read course.enroll` | Defines the course authorities used by the current sample. |Under **Custom scopes and API access** |
 | Authorization Details Type | `urn:ibm:demo:verify:agent_action` | Allows IBM Verify to evaluate the business operation described in Step 5. |Under **Custom scopes and API access** |
 
 7. Open the **Entitlements** tab for `UC1 Course Agent Token Exchange`. Select **All users are entitled to this application**
@@ -781,8 +780,6 @@ Before Token Exchange, the application resolves the selected action to a single 
 | `list_available_courses` | `course.read` |
 | `list_enrolled_courses` | `course.read` |
 | `enroll_course` | `course.enroll` |
-
-Any action that is not present in this mapping is rejected before a Token Exchange request is sent. This implements least privilege **at token issuance time** rather than relying only on Course API enforcement after the token has already been issued.
 
 
 ### Token Exchange request

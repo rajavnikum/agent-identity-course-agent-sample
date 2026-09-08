@@ -41,7 +41,8 @@
           "enum": [
             "list_available_courses",
             "list_enrolled_courses",
-            "enroll_course"
+            "enroll_course",
+            "delete_course_history"
           ]
         },
         "targetSystem": {
