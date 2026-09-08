@@ -420,7 +420,7 @@ curl --request PUT "$TENANT/oauth2/register/$ACTOR_CLIENT_ID" \
 
 ### With IBM Verify User Interface
 
-To associate the OAuth application after the Agent has been created perform the below steps:
+  To associate the OAuth application after the Agent has been created perform the below steps:
 
 1. Open the Agent in the IBM Verify administration console.
 2. Edit the Agent.
