@@ -1053,6 +1053,18 @@ curl --request PUT "$TENANT/v1.0/Agents/$AGENT_ID" \
   --data @curl/payloads/course-agent-suspend.json
 ```
 
+### With IBM Verify User Interface
+ 
+ To suspend an Agent using the IBM Verify user interface:
+
+1. Go to Identities → AI agents.
+2. Select the Agent that you want to suspend.
+3. Open Options for the selected Agent.
+4. Select Suspend.
+
+After the operation completes, verify that the Agent status is shown as: SUSPENDED
+
+
 > The Agent OAuth application remains associated with the Agent identity. 
 
 After suspending the Agent test operation again
