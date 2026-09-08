@@ -750,9 +750,11 @@ In the IBM Verify administration console:
 | Actor token type | `urn:ietf:params:oauth:token-type:access_token` | The agent access token is supplied as the actor token. |Under **Token Exchange** |
 | Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |Under **Token Exchange** |Under **Custom scopes and API access** |
 
-7.  Under **Endpoint configuration**, select **Token** and click **Edit**.
-   i) Go to **Consent request** and click **Edit**.
-   ii)  Paste the following rule to configure least-privilege scope evaluation by IBM Security Verify during Token Exchange.
+7.  Under **Endpoint configuration**, edit the **Token** configuration.
+
+    Go to **Consent request** and click **Edit**.
+
+    Paste the following rule to enable least-privilege scope evaluation by IBM Security Verify during Token Exchange.
 
   ```
   statements:
