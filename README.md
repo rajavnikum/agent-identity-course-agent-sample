@@ -210,6 +210,8 @@ Configure the API client with the following entitlements:
 | **Manage AI agents** | `manageAgentStatus`| Review and manage AI agent status |
 | **Manage OIDC client registration dynamically** | `manageOidcDynamicClient` | Required to create the agent OAuth client through Dynamic Client Registration when DCR requires bearer-token authentication. |
 | **Manage authorization detail types** | `manageAuthDetailTypes` | Create and manage the Authorization Details Type used by this sample. |
+| **Read Users** | `readUsers` | Read all users but not group memberships. |
+
 
 Do not select unrelated administrative entitlements. They are not required by this sample.
 
@@ -858,7 +860,10 @@ ACTOR_SCOPES=agent.run
 
 STS_CLIENT_ID=<sts-client-id>
 STS_CLIENT_SECRET=<sts-client-secret>
-STS_REQUESTED_SCOPE=course.read course.enroll
+
+VERIFY_MANAGEMENT_CLIENT_ID=<same API client ID>
+VERIFY_MANAGEMENT_CLIENT_SECRET=<same API client secret>
+VERIFY_MANAGEMENT_SCOPES=
 
 AGENT_ADT_TYPE=urn:ibm:demo:verify:agent_action
 COURSE_API_AUDIENCE=course-api
