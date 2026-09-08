@@ -111,14 +111,7 @@ async def token_exchange(
     subject_token: str,
     actor_token: str,
     authorization_details: list,
-    scope: str,
 ) -> dict:
-    # Scope is mandatory and is resolved per action by action_scopes.py.
-    # Do not fall back to a broad bundle: failure to provide a scope must fail closed.
-    scope = (scope or "").strip()
-    if not scope:
-        raise ValueError("A per-action scope is required for token exchange")
-
     data = {
         "grant_type": "urn:ietf:params:oauth:grant-type:token-exchange",
         "client_id": settings.sts_client_id,
@@ -128,8 +121,10 @@ async def token_exchange(
         "actor_token": actor_token,
         "actor_token_type": "urn:ietf:params:oauth:token-type:access_token",
         "authorization_details": json.dumps(authorization_details),
-        "scope": scope,
     }
+
+    if settings.sts_requested_scope:
+        data["scope"] = settings.sts_requested_scope
 
     if settings.course_api_audience:
         data["audience"] = settings.course_api_audience

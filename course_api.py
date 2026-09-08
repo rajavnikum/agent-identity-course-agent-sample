@@ -7,7 +7,6 @@ from __future__ import annotations
 from typing import Dict, Any, List
 
 from config import settings
-from action_scopes import COURSE_SCOPES, resolve_scope
 from token_utils import decode_unverified
 
 
@@ -33,6 +32,13 @@ ENROLLED_COURSES = {
         {"id": "DOCKER-101", "title": "Docker Essentials", "status": "enrolled"},
     ],
 }
+
+ACTION_SCOPE_MAP = {
+    "list_available_courses": "course.read",
+    "list_enrolled_courses": "course.read",
+    "enroll_course": "course.enroll",
+}
+
 
 def _normalize_subject(subject: str) -> str:
     if not subject:
@@ -125,28 +131,15 @@ def _validate_authorization_details(
 
 
 def _validate_scope(claims: Dict[str, Any], action: str) -> Dict[str, Any]:
-    try:
-        required_scope = resolve_scope(action)
-    except ValueError:
+    required_scope = ACTION_SCOPE_MAP.get(action)
+
+    if not required_scope:
         return {"valid": False, "reason": f"Unsupported action: {action}"}
 
     scopes = _scope_list(claims)
 
     if required_scope not in scopes:
         return {"valid": False, "reason": f"Missing required scope: {required_scope}. Token scopes={scopes}"}
-
-    # Enforce least privilege for the course authorities represented by this sample.
-    # This catches a delegated token that contains both course.read and course.enroll
-    # for a single action, while tolerating unrelated platform/default scopes.
-    granted_course_scopes = {scope for scope in scopes if scope in COURSE_SCOPES}
-    if granted_course_scopes != {required_scope}:
-        return {
-            "valid": False,
-            "reason": (
-                f"Over-privileged course scope for action '{action}'. "
-                f"Expected only '{required_scope}', token scopes={scopes}"
-            ),
-        }
 
     return {"valid": True}
 

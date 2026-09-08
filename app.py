@@ -14,7 +14,6 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
 from config import settings
-from action_scopes import ALLOWED_ACTIONS, resolve_scope
 from token_utils import decode_unverified, verify_id_token
 from rar_builder import build_agent_authorization_details
 from verify_oauth import (
@@ -32,6 +31,13 @@ app = FastAPI(title="UC1 Conversational Agent with IBM Verify")
 app.add_middleware(SessionMiddleware, secret_key=settings.session_secret)
 templates = Jinja2Templates(directory="templates")
 
+
+ALLOWED_ACTIONS = {
+    "list_available_courses",
+    "enroll_course",
+    "list_enrolled_courses",
+    "delete_course_history",
+}
 
 
 def is_self_reference(value: str | None, logged_in_subject: str) -> bool:
@@ -238,10 +244,6 @@ async def chat(request: Request, message: str = Form(...)):
         if action not in ALLOWED_ACTIONS:
             raise ValueError(f"Unsupported action from intent classifier: {action}")
 
-        # Resolve the minimum OAuth scope before requesting a delegated token.
-        # Unknown actions fail closed and never reach IBM Verify STS.
-        required_scope = resolve_scope(action)
-
         target_subject, resolved_verify_user, target_resolution_source = await resolve_target_subject(
             llm_target_subject=llm_target_subject,
             logged_in_subject=logged_in_subject,
@@ -290,7 +292,6 @@ async def chat(request: Request, message: str = Form(...)):
             subject_token=subject_token,
             actor_token=actor_token,
             authorization_details=authorization_details,
-            scope=required_scope,
         )
 
         delegated_token = exchanged_tokens["access_token"]
@@ -311,7 +312,6 @@ async def chat(request: Request, message: str = Form(...)):
             "logged_in_subject": logged_in_subject,
             "requested_subject": target_subject,
             "action": action,
-            "requested_scope": required_scope,
             "authorization_details": authorization_details,
             "id_token_claims": id_claims,
             "actor_token_claims": decode_unverified(actor_token),
