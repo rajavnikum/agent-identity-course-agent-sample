@@ -1188,7 +1188,7 @@ For example:
 ```text
 Client name:    UC1 Course Agent Token Exchange
 Grant type:     urn:ietf:params:oauth:grant-type:token-exchange
-Granted scope:  course.read course.enroll
+Granted scope:  course.enroll
 Token type:     access_token
 Action:         Issued
 Result:         Success
@@ -1197,7 +1197,7 @@ Result:         Success
 For an enrollment operation, the expected least-privileged scope is:
 
 ```text
-course.read course.enroll
+course.enroll
 ```
 
 The Token Exchange event therefore represents the runtime delegated authorization performed after IBM Verify has received both the Human User subject token and the Agent actor token.
