@@ -383,7 +383,7 @@ curl --request GET "$TENANT/v1.0/Agents" \
 * Run **03 - Onboard Agent**.<br>
 * Run **04 - Get Agent Details**.
 
-### UI 
+### With IBM Verify User Interface
 * Go to Admin Console,Under **Identities** <br>
 * Click AI agents
 * Create Agent
