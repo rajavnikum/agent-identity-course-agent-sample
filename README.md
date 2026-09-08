@@ -748,13 +748,13 @@ In the IBM Verify administration console:
 | Audience | `course-api` | Binds the delegated token to the protected Course API.|Under **Token Settings** |
 | Subject token type | `urn:ietf:params:oauth:token-type:access_token` | The human user's access token is supplied as the subject token. |Under **Token Exchange** |
 | Actor token type | `urn:ietf:params:oauth:token-type:access_token` | The agent access token is supplied as the actor token. |Under **Token Exchange** |
-| Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |Under **Token Exchange** |Under **Custom scopes and API access** |
+| Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |Under **Token Exchange** 
 
 7.  Under **Endpoint configuration**, edit the **Token** configuration.
 
     Go to **Consent request** and click **Edit**.
 
-    Paste the following rule to enable least-privilege scope evaluation by IBM Security Verify during Token Exchange.
+    Paste the following rule to enable least-privilege scope evaluation by IBM Security Verify during Token Exchange for different actions.
 
   ```
   statements:
@@ -794,7 +794,7 @@ In the IBM Verify administration console:
   - return: context.none
 ```
 
-| Authorization Details Type | `urn:ibm:demo:verify:agent_action` | Allows IBM Verify to evaluate the business operation described in Step 5. |Under **Custom scopes and API access** |
+8.  Attach `urn:ibm:demo:verify:agent_action` in Authorization Details Type which allows IBM Verify to evaluate the business operation.
 
 7. Open the **Entitlements** tab for `UC1 Course Agent Token Exchange`. Select **All users are entitled to this application**
 
@@ -814,36 +814,7 @@ This prevents an arbitrary OAuth client from presenting a user's subject token a
 The Authorization Details Type configured in Step 5 provides the additional operation context used during the authorization decision.
 
 
-### Least privilege at token issuance
-
-The Token Exchange application is configured to **allow** both `course.read` and `course.enroll`, but the Course Agent Application does not request both scopes for every operation.
-
-Before Token Exchange, the application resolves the selected action to a single minimum scope in `action_scopes.py`:
-
-| Agent action | Scope requested from IBM Verify |
-|---|---|
-| `list_available_courses` | `course.read` |
-| `list_enrolled_courses` | `course.read` |
-| `enroll_course` | `course.enroll` |
-
-
-### Token Exchange request
-
-At runtime, the sample sends a request containing:
-
-```text
-grant_type           = urn:ietf:params:oauth:grant-type:token-exchange
-subject_token        = <human access token>
-subject_token_type   = urn:ietf:params:oauth:token-type:access_token
-actor_token          = <agent access token>
-actor_token_type     = urn:ietf:params:oauth:token-type:access_token
-requested_token_type = urn:ietf:params:oauth:token-type:access_token
-scope                = course.read course.enroll
-audience             = course-api
-authorization_details type = urn:ibm:demo:verify:agent_action
-```
-
-After completing the Token Exchange client ID configuration, record:
+After the "UC1 Course Agent Token Exchange" application is created, open the application in IBM Verify and record the **STS_CLIENT_ID** and **STS_CLIENT_SECRET** value. Value will be used in Step 7.
 
 ```bash
 export STS_CLIENT_ID="<sts-client-id>"
