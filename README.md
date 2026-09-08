@@ -751,8 +751,8 @@ In the IBM Verify administration console:
 | Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |Under **Token Exchange** |Under **Custom scopes and API access** |
 
 7.  Under **Endpoint configuration**, select **Token** and click **Edit**.
-    Go to **Consent request** and click **Edit**.
-    Paste the following rule to configure least-privilege scope evaluation by IBM Security Verify during Token Exchange.
+   i) Go to **Consent request** and click **Edit**.
+   ii)  Paste the following rule to configure least-privilege scope evaluation by IBM Security Verify during Token Exchange.
 
   ```
   statements:
