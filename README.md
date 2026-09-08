@@ -215,7 +215,7 @@ Configure the API client with the following entitlements:
 
 Do not select unrelated administrative entitlements. They are not required by this sample.
 
-After creating the API client, record its client ID and client secret:
+After creating the API client, record its client ID and client secret. These values will be used in Step 7.
 
 ```bash
 export TENANT="https://<your-tenant>"
