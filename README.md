@@ -749,6 +749,49 @@ In the IBM Verify administration console:
 | Subject token type | `urn:ietf:params:oauth:token-type:access_token` | The human user's access token is supplied as the subject token. |Under **Token Exchange** |
 | Actor token type | `urn:ietf:params:oauth:token-type:access_token` | The agent access token is supplied as the actor token. |Under **Token Exchange** |
 | Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |Under **Token Exchange** |Under **Custom scopes and API access** |
+
+7.  Under **Endpoint configuration**, select **Token** and click **Edit**.
+    Go to **Consent request** and click **Edit**.
+    Paste the following rule to configure least-privilege scope evaluation by IBM Security Verify during Token Exchange.
+
+  ```
+  statements:
+  - context: read := ["course.read"]
+  - context: enroll := ["course.enroll"]
+  - context: none := []
+  - context: test := requestContext.authorization_details[0]
+  - context: >
+      authzDetails := has(requestContext.authorization_details)
+      ? requestContext.authorization_details.map(x,
+        {
+          "purpose": x.type,
+          "attribute": x.operationDetails.resource,
+          "accessType": x.operationDetails.action,
+          "value": x.courseId,
+          "tokenClaims": {
+            "authorization_details": [x]
+          }
+        })
+      : []
+  
+  - if:
+      match: context.test.operationDetails.action == "list_available_courses" 
+      block:
+        - return: context.authzDetails + context.read
+
+  - if:
+      match: context.test.operationDetails.action == "list_enrolled_courses"
+      block:
+        - return: context.authzDetails + context.read
+
+  - if:
+      match: context.test.operationDetails.action == "enroll_course"
+      block:
+        - return: context.authzDetails + context.enroll
+
+  - return: context.none
+```
+
 | Authorization Details Type | `urn:ibm:demo:verify:agent_action` | Allows IBM Verify to evaluate the business operation described in Step 5. |Under **Custom scopes and API access** |
 
 7. Open the **Entitlements** tab for `UC1 Course Agent Token Exchange`. Select **All users are entitled to this application**
