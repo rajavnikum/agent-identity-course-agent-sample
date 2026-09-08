@@ -761,7 +761,7 @@ In the IBM Verify administration console:
   - context: read := ["course.read"]
   - context: enroll := ["course.enroll"]
   - context: none := []
-  - context: test := requestContext.authorization_details[0]
+  - context: evaluate := requestContext.authorization_details[0]
   - context: >
       authzDetails := has(requestContext.authorization_details)
       ? requestContext.authorization_details.map(x,
@@ -777,17 +777,17 @@ In the IBM Verify administration console:
       : []
   
   - if:
-      match: context.test.operationDetails.action == "list_available_courses" 
+      match: context.evaluate.operationDetails.action == "list_available_courses" 
       block:
         - return: context.authzDetails + context.read
 
   - if:
-      match: context.test.operationDetails.action == "list_enrolled_courses"
+      match: context.evaluate.operationDetails.action == "list_enrolled_courses"
       block:
         - return: context.authzDetails + context.read
 
   - if:
-      match: context.test.operationDetails.action == "enroll_course"
+      match: context.evaluate.operationDetails.action == "enroll_course"
       block:
         - return: context.authzDetails + context.enroll
 
