@@ -325,7 +325,7 @@ Agent Registry record
                        Token Exchange / runtime activity
 ```
 
-## Onboard the agent
+### Onboard the agent
 
 Create a new Agent in IBM Verify with the following values:
 
@@ -333,7 +333,7 @@ Display name: UC1 Course Conversational Agent
 Description: Conversational AI agent that invokes protected course tools
 Tags: course-agent, direct-tools, conversational-ai
 
-For this tutorial,**Onboard agent** through **one** of the following methods:
+For this tutorial, **Onboard agent** through **one** of the following methods:
 
 - cURL
 - Postman
@@ -386,7 +386,7 @@ curl --request GET "$TENANT/v1.0/Agents" \
 * Run **04 - Get Agent Details**.
 
 ### With IBM Verify User Interface
-* Go to Admin Console,Under **Identities** <br>
+* Go to Admin Console, Under **Identities** <br>
 * Click AI agents
 * Create Agent
 
@@ -515,7 +515,7 @@ The Agent should now:
 - be associated with the Agent OAuth application created in Step 2; and
 - have a status of `ACTIVE`.
 
-For more information about onboarding AI agents, please refer to the IBM documentation: :https://www.ibm.com/docs/en/agent-identity?topic=tasks-onboarding-ai-agent
+For more information about onboarding AI agents, please refer to the IBM documentation:https://www.ibm.com/docs/en/agent-identity?topic=tasks-onboarding-ai-agent
 
 ## Step 4 — Configure the human subject application
 
@@ -754,9 +754,9 @@ In the IBM Verify administration console:
 
 7.  Under **Endpoint configuration**, edit the **Token** configuration.
 
-    Go to **Consent request** and click **Edit**.
+   a. Go to **Consent request** and click **Edit**.
 
-    Paste the following rule to enable least-privilege scope evaluation by IBM Security Verify during Token Exchange for different actions.
+   b. Paste the following rule to enable least-privilege scope evaluation by IBM Security Verify during Token Exchange for different actions.
 
   ```
   statements:
@@ -882,7 +882,7 @@ USE_LLM=false
 USE_LLM=true
 GEMINI_API_KEY=<your-key>
 ```
-> **Note:** Gemini model availability can vary by account and over time. If `gemini-2.5-flash` is not available for your API key, set `GEMINI_MODEL` to a model that is currently enabled for your account.
+> *Note:* Gemini model availability can vary by account and over time. If `gemini-2.5-flash` is not available for your API key, set `GEMINI_MODEL` to a model that is currently enabled for your account.
 
 ## Step 8 — Install and run
 
@@ -964,7 +964,7 @@ Expected security result:
 - `affectedPerson` represents the signed-in user;
 - `loggedInSubject` represents the signed-in user;
 - actor identity represents the registered agent client;
-- requested scope includes `course.enroll`;
+- requested scope includes `course read course.enroll`;
 - Course API permits the operation when all validation succeeds.
 
 ### Test C — List the user's enrolled courses
