@@ -113,7 +113,7 @@ The following sequence shows which logical entity performs each operation. The s
  ![Flow architecture](images/websequence.png)
 
 
-### Runtime flow
+### ### Runtime flow
 
 The numbered steps below correspond directly to the **Runtime sequence** diagram above.
 
@@ -129,31 +129,31 @@ The numbered steps below correspond directly to the **Runtime sequence** diagram
 
 6. The **Course Agent Application** exchanges the authorization code and PKCE verifier with **IBM Verify**.
 
-7. **IBM Verify** returns the human user's **subject access token** to the **Course Agent Application**.
+7. **IBM Verify** returns the human user's **subject access token** to the **Course Agent Application**, where it is associated with the authenticated user session.
 
-8. The **Human User** submits a natural-language course request to the **Course Agent Application**.
+8. The **Human User** submits a natural-language course request to the **Course Agent** through the Course Agent Application.
 
-9. The **Course Agent Application** maps the request to one of the allow-listed course actions.
+9. The **Course Agent** uses the **LLM** to interpret the user's intent and translate the request into an appropriate task or tool invocation. The selected action is constrained to the Agent's allow-listed course operations.
 
-10. The **Course Agent Application** resolves the target user and other context required for the requested operation.
+10. Based on the selected task, the **Course Agent** resolves the target user and other context required to perform the requested operation.
 
-11. The **Course Agent Application** constructs the operation-specific `authorization_details` that describe what the agent is requesting to do.
+11. The **Course Agent** determines the authorization required for the selected operation and constructs the operation-specific `authorization_details` describing what the Agent is requesting to do.
 
-12. The **Course Agent Application** requests an **actor access token** from **IBM Verify** using the credentials of the Agent OAuth application associated with the registered Agent identity.
+12. The **Course Agent** requests an **actor access token** from **IBM Verify** using the credentials of the Agent OAuth application associated with its registered Agent identity.
 
-13. **IBM Verify** authenticates the Agent OAuth application and returns the **actor access token** to the **Course Agent Application**.
+13. **IBM Verify** authenticates the Agent OAuth application and returns the **actor access token** to the **Course Agent**.
 
-14. The **Course Agent Application** sends an OAuth 2.0 Token Exchange request to **IBM Verify** containing the subject token, actor token, requested scope, audience, and `authorization_details`.
+14. The **Course Agent** sends an OAuth 2.0 Token Exchange request to **IBM Verify** containing the human user's subject token, the Agent's actor token, requested scope, audience, and `authorization_details`.
 
-15. **IBM Verify** evaluates the subject, actor, delegation relationship, requested authorization context, and Token Exchange configuration. If the request is allowed, IBM Verify returns a **delegated access token**.
+15. **IBM Verify** evaluates the subject, actor, delegation relationship, requested authorization context, Token Exchange configuration, and authorization policy. If the request is allowed, IBM Verify returns a **delegated access token** to the **Course Agent**.
 
-16. The **Course Agent Application** calls the protected **Course API** using the delegated access token.
+16. The **Course Agent** calls the protected **Course API** using the delegated access token.
 
 17. The **Course API** validates the delegated authorization, including the expected audience, required scope, actor and subject context, and authorization details. If validation succeeds, the Course API executes the requested course operation.
 
-18. The **Course API** returns the result to the **Course Agent Application**.
+18. The **Course API** returns the operation result to the **Course Agent**.
 
-19. The **Course Agent Application** presents the result to the **Human User**.
+19. The **Course Agent** uses the operation result to construct the final response, which is presented to the **Human User** through the Course Agent Application.
 
 
 
@@ -760,40 +760,31 @@ In the IBM Verify administration console:
 
   ```
   statements:
-  - context: read := ["course.read"]
-  - context: enroll := ["course.enroll"]
-  - context: none := []
-  - context: evaluate := requestContext.authorization_details[0]
   - context: >
       authzDetails := has(requestContext.authorization_details)
       ? requestContext.authorization_details.map(x,
-        {
-          "purpose": x.type,
-          "attribute": x.operationDetails.resource,
-          "accessType": x.operationDetails.action,
-          "value": x.courseId,
-          "tokenClaims": {
-            "authorization_details": [x]
-          }
-        })
+          {
+            "purpose": x.type,
+            "attribute": x.operationDetails.resource,
+            "accessType": x.operationDetails.action,
+            "value": x.courseId,
+
+            "scope":
+              x.operationDetails.action == "list_available_courses"
+              ? "course.read"
+              : x.operationDetails.action == "list_enrolled_courses"
+                ? "course.read"
+                : x.operationDetails.action == "enroll_course"
+                  ? "course.enroll"
+                  : "",
+
+            "tokenClaims": {
+              "authorization_details": [x]
+            }
+          })
       : []
-  
-  - if:
-      match: context.evaluate.operationDetails.action == "list_available_courses" 
-      block:
-        - return: context.authzDetails + context.read
 
-  - if:
-      match: context.evaluate.operationDetails.action == "list_enrolled_courses"
-      block:
-        - return: context.authzDetails + context.read
-
-  - if:
-      match: context.evaluate.operationDetails.action == "enroll_course"
-      block:
-        - return: context.authzDetails + context.enroll
-
-  - return: context.none
+  - return: context.authzDetails
 ```
 
 8.  Attach `urn:ibm:demo:verify:agent_action` in Authorization Details Type which allows IBM Verify to evaluate the business operation.
