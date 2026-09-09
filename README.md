@@ -489,7 +489,7 @@ ACTIVE
 Create a `PUT` request to:
 
 ```text
-{{ TENANT }}/v1.0/Agents/{{ AGENT_ID }}
+{{ TENANT }}/v1.0/Agents/{{AGENT_ID}}
 ```
 
 * Run **06 Activate Agent**.
@@ -500,7 +500,7 @@ Create a `PUT` request to:
 Create a `PUT` request to:
 
 ```text
-{{ TENANT }}/v1.0/Agents/{{ AGENT_ID }}
+{{ TENANT }}/v1.0/Agents/{{AGENT_ID}}
 ```
 * Run **06 Activate Agent**.
 
@@ -642,17 +642,7 @@ This tutorial uses **All users are entitled to this application** so that the te
 
 ## Step 5 — Create the Authorization Details Type
 
-The Authorization Details Type (ADT) defines the structured authorization context that the agent sends during token exchange.
-
-OAuth scopes such as course.read and course.enroll describe the general API permission being requested. The ADT adds the business-operation context needed by IBM Verify to evaluate the specific action the agent is attempting, for example:
-
-which action is being requested;
-which user is affected;
-which agent initiated the request;
-which target system and resource are involved; and
-which course is being accessed.
-
-This allows IBM Verify to make a more fine-grained authorization decision during token exchange instead of relying only on OAuth scopes.
+> Note: Given that the authorization server requires additional finer-grained information before granting permissions to an Agent to perform a specific action, an ADT is introduced to represent this.
 
 To learn more about Authorization Details Types, see the IBM Verify documentation: https://docs.verify.ibm.com/ibm-security-verify-access/docs/tasks-rar
 
@@ -787,7 +777,7 @@ In the IBM Verify administration console:
   - return: context.authzDetails
 ```
 
-8.  Attach `urn:ibm:demo:verify:agent_action` in Authorization Details Type which allows IBM Verify to evaluate the business operation.
+8.  Attach the `urn:ibm:demo:verify:agent_action` Authorization Details Type to the Token Exchange application so that the client can request this authorization detail type.
 
 7. Open the **Entitlements** tab for `UC1 Course Agent Token Exchange`. Select **All users are entitled to this application**
 
