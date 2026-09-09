@@ -2,81 +2,15 @@ type: collection.insomnia.rest/5.0
 schema_version: "5.1"
 name: UC1 IBM Verify Setup
 meta:
-  id: wrk_2588739bdfc74c3584f20091ee57f79d
-  created: 1788352083454
-  modified: 1788352083454
+  id: wrk_9ff9f25f10e84ef9b3a766b12a4f3fd9
+  created: 1788957978454
+  modified: 1788957978454
   description: ""
 collection:
-  - url: "{{TENANT}}/oauth2/token"
-    name: 01 - Get Admin Access Token
-    meta:
-      id: req_d6e0af28ef314771b08e52d6e4216a14
-      created: 0
-      modified: 1788353473342
-      isPrivate: false
-      description: ""
-      sortKey: -6000
-    method: POST
-    body:
-      mimeType: application/x-www-form-urlencoded
-      params:
-        - name: grant_type
-          value: client_credentials
-          description: ""
-          disabled: false
-        - name: client_id
-          value: "{{VERIFY_ADMIN_CLIENT_ID}}"
-          description: ""
-          disabled: false
-          multiline: false
-          type: text
-        - name: client_secret
-          value: "{{VERIFY_ADMIN_CLIENT_SECRET}}"
-          description: ""
-          disabled: false
-    headers:
-      - name: Content-Type
-        value: application/x-www-form-urlencoded
-    authentication:
-      type: none
-    settings:
-      renderRequestBody: true
-      encodeUrl: true
-      followRedirects: global
-      cookies:
-        send: true
-        store: true
-      rebuildPath: true
-  - url: "{{TENANT}}/v1.0/Agents"
-    name: 04 Get Agent Details
-    meta:
-      id: req_f3be5932f0334efeafc2402e61efe7a1
-      created: 0
-      modified: 1788356193890
-      isPrivate: false
-      description: ""
-      sortKey: -5187.5
-    method: GET
-    body:
-      mimeType: application/x-www-form-urlencoded
-      text: ""
-    headers:
-      - name: Authorization
-        value: Bearer {{ADMIN_ACCESS_TOKEN}}
-      - name: Accept
-        value: application/scim+json
-    settings:
-      renderRequestBody: true
-      encodeUrl: true
-      followRedirects: global
-      cookies:
-        send: true
-        store: true
-      rebuildPath: true
   - url: "{{TENANT}}/oauth2/register"
     name: 02 - DCR - Create Actor Client
     meta:
-      id: req_6b7580af6bc447cb940ca30e458b5b8e
+      id: req_b2ac50486a754482a0afdda71123f73d
       created: 1788352743308
       modified: 1788353787776
       isPrivate: false
@@ -114,7 +48,7 @@ collection:
   - url: "{{TENANT}}/v1.0/Agents"
     name: 03 - Onboard Agent
     meta:
-      id: req_20fe1ff81cb74833b252571e86aca623
+      id: req_aa4a6e696bd04c84928ccc81437524c9
       created: 1788353274883
       modified: 1788356024742
       isPrivate: false
@@ -163,12 +97,12 @@ collection:
         send: true
         store: true
       rebuildPath: true
-  - url: "{{TENANT}}/oauth2/register/{{actor_client_id}}"
+  - url: "{{TENANT}}/oauth2/register/{{ACTOR_CLIENT_ID}}"
     name: 05 - DCR - Associate Actor Client with Agent
     meta:
-      id: req_90182b3518ca4459ad1adbe84f36f48d
+      id: req_1fd812543d2347f5a5eb13a439af8b3d
       created: 1788354107150
-      modified: 1788356157716
+      modified: 1788958110515
       isPrivate: false
       description: ""
       sortKey: -5125
@@ -217,9 +151,9 @@ collection:
   - url: "{{TENANT}}/v1.0/Agents/{{AGENT_ID }}"
     name: 06 - Activate Agent
     meta:
-      id: req_7e17d636538849ac8ea388355da83cad
+      id: req_605c06e2e021400c860d908bcfaba8a8
       created: 1788369574857
-      modified: 1788369711184
+      modified: 1788958056869
       isPrivate: false
       description: ""
       sortKey: -5062.5
@@ -267,46 +201,86 @@ collection:
         send: true
         store: true
       rebuildPath: true
+  - url: "{{TENANT}}/v1.0/Agents"
+    name: 04 Get Agent Details
+    meta:
+      id: req_34b61f7b61e14dc2a5bc4c81ee45aa86
+      created: 1788957976175
+      modified: 1788356193890
+      isPrivate: false
+      description: ""
+      sortKey: -5187.5
+    method: GET
+    body:
+      mimeType: application/x-www-form-urlencoded
+      text: ""
+    headers:
+      - name: Authorization
+        value: Bearer {{ADMIN_ACCESS_TOKEN}}
+      - name: Accept
+        value: application/scim+json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{TENANT}}/oauth2/token"
+    name: 01 - Get Admin Access Token
+    meta:
+      id: req_ba670d659a0a4d228ffe50260ac0013a
+      created: 1788957976175
+      modified: 1788353473342
+      isPrivate: false
+      description: ""
+      sortKey: -6000
+    method: POST
+    body:
+      mimeType: application/x-www-form-urlencoded
+      params:
+        - name: grant_type
+          value: client_credentials
+          description: ""
+          disabled: false
+        - name: client_id
+          value: "{{VERIFY_ADMIN_CLIENT_ID}}"
+          description: ""
+          disabled: false
+          multiline: false
+          type: text
+        - name: client_secret
+          value: "{{VERIFY_ADMIN_CLIENT_SECRET}}"
+          description: ""
+          disabled: false
+    headers:
+      - name: Content-Type
+        value: application/x-www-form-urlencoded
+    authentication:
+      type: none
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
 cookieJar:
   name: Default Jar
   meta:
-    id: jar_d64993cc8e77bf4b343223f75f704eee1dbe1c92
+    id: jar_36b52eceed8e464dbb2de8dd6394e8de
     created: 1788352083461
     modified: 1788356040178
-  cookies:
-    - id: 45a36282-094a-4918-bc42-36b85471effd
-      key: CIPD-S-SESSION-ID
-      value: 0:1:rediscol01a:q3q/zJzqgIkdp/XIcgXl2ROqGpzG2N61NYXG+VyXkwQ=
-      domain: xxx.ibmverify.com
-      path: /
-      secure: true
-      httpOnly: true
-      hostOnly: true
-    - id: f2e8d000-738e-4f8c-afd7-edcf60fc4c2b
-      key: CISESSIONIDPR01A
-      value: PBC5YS:4238940180
-      domain: ice.ibmcloud.com
-      path: /
-      secure: true
-      httpOnly: true
-      hostOnly: false
 environments:
   name: Base Environment
   meta:
-    id: env_3b500fdaea1746abb7cc3393c8a0a25b
-    created: 0
-    modified: 1788369614840
+    id: env_8b9089ffb34f4bd5a726eeaf6af260de
+    created: 1788957976174
+    modified: 1788958212936
     isPrivate: false
   data:
-    TENANT: https://xxx.cloud.com
-    VERIFY_ADMIN_CLIENT_ID: 
-    VERIFY_ADMIN_CLIENT_SECRET: 
-    ADMIN_ACCESS_TOKEN: 
-    actor_client_id: ""
-    actor_client_secret: ""
-    actor_client_reference: ""
+    TENANT: https://<yourdomain>.verify.ibm.com
+    ACTOR_CLIENT_ID: ""
     AGENT_ID: ""
-    actor_scope: agent.run
-    resource_client_id: ""
-    resource_client_secret: ""
-    actor_access_token: ""
