@@ -277,7 +277,7 @@ cookieJar:
     - id: 45a36282-094a-4918-bc42-36b85471effd
       key: CIPD-S-SESSION-ID
       value: 0:1:rediscol01a:q3q/zJzqgIkdp/XIcgXl2ROqGpzG2N61NYXG+VyXkwQ=
-      domain: rajeev.ice.ibmcloud.com
+      domain: 
       path: /
       secure: true
       httpOnly: true
