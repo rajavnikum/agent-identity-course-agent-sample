@@ -169,10 +169,26 @@ async def callback(
             expected_nonce=expected_nonce,
         )
 
-        # Keep OAuth tokens separate from the authenticated user's identity.
-        # The access token is used only as the subject_token during Token Exchange.
-        request.session["subject_tokens"] = tokens
+        # Keep only the access token in the browser-backed Starlette session.
+        # Do NOT store the complete OAuth token response here because a JWT-formatted
+        # access token + ID token + claims can make the signed session cookie too large.
+        #
+        # The access token remains an OAuth access token even when its FORMAT is JWT,
+        # so verify_oauth.py must continue to send it as subject_token_type=access_token.
+        request.session["subject_tokens"] = {
+            "access_token": tokens["access_token"],
+        }
+
+        # Keep the validated ID-token claims for the logged-in human identity.
+        # We do not store the raw ID token itself in the session.
         request.session["subject_identity"] = id_claims
+
+        # Temporary diagnostics. Safe to remove after confirming JWT login works.
+        print("========== TOKEN SIZE DEBUG ==========")
+        print("ACCESS TOKEN LENGTH:", len(tokens.get("access_token", "")))
+        print("ID TOKEN LENGTH:", len(tokens.get("id_token", "")))
+        print("IDENTITY CLAIMS LENGTH:", len(str(id_claims)))
+        print("======================================")
 
         request.session.pop("oauth_state", None)
         request.session.pop("oauth_nonce", None)
