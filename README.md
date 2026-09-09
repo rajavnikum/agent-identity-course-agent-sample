@@ -113,7 +113,7 @@ The following sequence shows which logical entity performs each operation. The s
  ![Flow architecture](images/websequence.png)
 
 
-### ### Runtime flow
+### Runtime flow
 
 The numbered steps below correspond directly to the **Runtime sequence** diagram above.
 
