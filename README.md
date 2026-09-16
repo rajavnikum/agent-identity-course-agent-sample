@@ -292,16 +292,23 @@ export ACTOR_CLIENT_SECRET="<actor-client-secret>"
 ```
 These credentials belong to the agent's OAuth application and are used only to obtain the actor token at runtime.
 
-## Step 3 — Onboard the conversational agent and associate the actor client
+## Step 3 — Onboard the AI agent and associate the actor client
 
-The OAuth application created in Step 2 provides the runtime credentials used by the conversational agent to obtain an actor token.
+The OAuth application created in Step 2 provides the runtime credentials that the Course Agent Application uses to obtain an actor token.
 
+In this step, you register the AI agent in IBM Security Verify's Agent Registry and associate it with that OAuth application.
 
 ### Why the Agent Registry record matters
 
-The Agent Registry record gives the AI agent a **stable governed identity** that is separate from individual OAuth credentials.
+The Agent Registry provides a governed identity for the AI agent, distinct from the OAuth application and its runtime credentials.
 
-The Agent OAuth application created in Step 2 provides the runtime credentials used by the Course Agent Application. By associating that OAuth application with the Agent Registry record, IBM Verify can relate the runtime OAuth identity back to the governed Agent identity.
+The three components serve different purposes:
+
+*Course Agent Application*: Hosts the conversational interface and runs the AI agent.
+*Actor OAuth application*: Provides the OAuth client credentials used to obtain an actor token.
+*Agent Registry record*: Represents the AI agent as a governed identity and establishes its association with the actor OAuth application.
+
+Associating the OAuth application with the Agent Registry record allows IBM Verify to relate the runtime OAuth identity to the registered AI agent.
 
 This association is important for operational governance and audit because OAuth client credentials can be rotated or replaced while the Agent identity remains stable. The Agent Registry therefore provides a durable identity and correlation point for tracking which governed agent is associated with runtime activity.
 
@@ -743,40 +750,177 @@ In the IBM Verify administration console:
 | Actor token type | `urn:ietf:params:oauth:token-type:access_token` | The agent access token is supplied as the actor token. |Under **Token Exchange** |
 | Requested token type | `urn:ietf:params:oauth:token-type:access_token` | Requests a delegated access token for the Course API. |Under **Token Exchange** 
 
-7.  Under **Endpoint configuration**, edit the **Token** configuration.
+7. Under **Endpoint configuration**, edit the **Token** configuration.
 
    a. Go to **Consent request** and click **Edit**.
 
-   b. Paste the following rule to enable least-privilege scope evaluation by IBM Security Verify during Token Exchange for different actions.
+   b. Configure the consent mapping rule so that IBM Security Verify derives the minimum OAuth scope required for the requested agent action from the `authorization_details` received during Token Exchange.
 
-  ```
-  statements:
-  - context: >
-      authzDetails := has(requestContext.authorization_details)
-      ? requestContext.authorization_details.map(x,
-          {
-            "purpose": x.type,
-            "attribute": x.operationDetails.resource,
-            "accessType": x.operationDetails.action,
-            "value": x.courseId,
+   The Course Agent does not decide whether an operation requires `course.read` or `course.enroll`. Instead, the application describes the requested operation in the `authorization_details` parameter, and IBM Security Verify maps that action to the appropriate scope.
 
-            "scope":
-              x.operationDetails.action == "list_available_courses"
-              ? "course.read"
-              : x.operationDetails.action == "list_enrolled_courses"
-                ? "course.read"
-                : x.operationDetails.action == "enroll_course"
-                  ? "course.enroll"
-                  : "",
+   For example, when the user asks:
 
-            "tokenClaims": {
-              "authorization_details": [x]
-            }
-          })
-      : []
+   ```text
+   Show me the available courses
+   ```
 
-  - return: context.authzDetails
-```
+   the Token Exchange request contains an authorization detail similar to:
+
+   ```json
+   [
+     {
+       "type": "urn:ibm:demo:verify:agent_action",
+       "courseId": "ALL",
+       "operationDetails": {
+         "creator": "<AGENT_ID>",
+         "affectedPerson": "user@example.com",
+         "loggedInSubject": "user@example.com",
+         "action": "list_available_courses",
+         "targetSystem": "course-api",
+         "resource": "courses"
+       }
+     }
+   ]
+   ```
+
+   In this use case, the authorization details received during Token Exchange are available to the mapping rule as:
+
+   ```text
+   requestContext.authorization_details
+   ```
+
+   The rule evaluates `operationDetails.action` and associates the authorization detail with the minimum scope required for that operation.
+
+   Paste the following rule:
+
+   ```yaml
+   statements:
+     - context: >
+         authzDetails := has(requestContext.authorization_details)
+         ? requestContext.authorization_details.map(x,
+             {
+               "purpose": x.type,
+               "attribute": x.operationDetails.resource,
+               "accessType": x.operationDetails.action,
+               "value": x.courseId,
+               "scope":
+                 x.operationDetails.action == "list_available_courses"
+                 ? "course.read"
+                 : x.operationDetails.action == "list_enrolled_courses"
+                   ? "course.read"
+                   : x.operationDetails.action == "enroll_course"
+                     ? "course.enroll"
+                     : "",
+               "tokenClaims": {
+                 "authorization_details": [x]
+               }
+             })
+         : []
+
+     - return: context.authzDetails
+   ```
+
+   c. Understand how the rule evaluates the request.
+
+   The first check:
+
+   ```text
+   has(requestContext.authorization_details)
+   ```
+
+   prevents the mapping from failing when `authorization_details` is not present.
+
+   If no authorization details are present, the mapping returns:
+
+   ```json
+   []
+   ```
+
+   If authorization details are present, each authorization detail is transformed into an authorization item containing the following information:
+
+   | Property | Description |
+   |---|---|
+   | `purpose` | The Authorization Details Type, such as `urn:ibm:demo:verify:agent_action`. |
+   | `attribute` | The protected resource being accessed. |
+   | `accessType` | The action the agent is requesting. |
+   | `value` | The resource-specific value, such as a course ID. |
+   | `scope` | The minimum OAuth scope associated with the requested action. |
+   | `tokenClaims.authorization_details` | Preserves the approved authorization detail in the delegated token so that the protected resource can validate the fine-grained authorization context. |
+
+   In this use case, IBM Security Verify maps the actions as follows:
+
+   | Agent action | Scope associated with the authorization |
+   |---|---|
+   | `list_available_courses` | `course.read` |
+   | `list_enrolled_courses` | `course.read` |
+   | `enroll_course` | `course.enroll` |
+   | `delete_course` | No scope |
+
+   This means that a request to list courses does not automatically receive `course.enroll`, and an enrollment request receives only the scope required for enrollment.
+
+   d. Review an example mapping result.
+
+   For the following authorization detail:
+
+   ```json
+   {
+     "type": "urn:ibm:demo:verify:agent_action",
+     "courseId": "ALL",
+     "operationDetails": {
+       "creator": "<AGENT_ID>",
+       "affectedPerson": "user@example.com",
+       "loggedInSubject": "user@example.com",
+       "action": "list_available_courses",
+       "targetSystem": "course-api",
+       "resource": "courses"
+     }
+   }
+   ```
+
+   the rule produces an authorization item conceptually equivalent to:
+
+   ```json
+   [
+     {
+       "purpose": "urn:ibm:demo:verify:agent_action",
+       "attribute": "courses",
+       "accessType": "list_available_courses",
+       "value": "ALL",
+       "scope": "course.read",
+       "tokenClaims": {
+         "authorization_details": [
+           {
+             "type": "urn:ibm:demo:verify:agent_action",
+             "courseId": "ALL",
+             "operationDetails": {
+               "creator": "<AGENT_ID>",
+               "affectedPerson": "user@example.com",
+               "loggedInSubject": "user@example.com",
+               "action": "list_available_courses",
+               "targetSystem": "course-api",
+               "resource": "courses"
+             }
+           }
+         ]
+       }
+     }
+   ]
+   ```
+
+   The scope is therefore part of the mapped authorization item:
+
+   ```json
+   "scope": "course.read"
+   ```
+
+   It is not returned as a separate element in the result array.
+
+   If IBM Security Verify grants this authorization item, the resulting delegated token receives the corresponding scope.
+
+   e. For more information about configuring OpenID Connect request consent mapping, including the supported mapping structure and properties, see:
+
+   [OpenID Connect request consent mapping](https://www.ibm.com/docs/en/security-verify?topic=mapping-openid-connect-request-consent-requests)
+   
 
 8.  Attach the `urn:ibm:demo:verify:agent_action` Authorization Details Type to the Token Exchange application so that the client can request this authorization detail type.
 
