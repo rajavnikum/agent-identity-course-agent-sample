@@ -798,7 +798,7 @@ This prevents an arbitrary OAuth client from presenting a user's subject token a
 The Authorization Details Type configured in Step 5 provides the additional operation context used during the authorization decision.
 
 
-After the "UC1 Course Agent Token Exchange" application is created, open the application in IBM Verify and record the **STS_CLIENT_ID** and **STS_CLIENT_SECRET** value. Value will be used in Step 7.
+After the "UC1 Course Agent Token Exchange" application is created, open the application in IBM Verify and record the **STS_CLIENT_ID** and **STS_CLIENT_SECRET** value. These Value will be used in Step 7.
 
 ```bash
 export STS_CLIENT_ID="<sts-client-id>"
