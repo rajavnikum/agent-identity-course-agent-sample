@@ -544,7 +544,7 @@ Configure the application as follows:
 | Scopes | `openid profile email course.read course.enroll` | Requests the identity and course permissions required by the sample. |
 
 
-After the application is created, open the application in IBM Verify and record the **SUBJECT_CLIENT_ID** and **SUBJECT_CLIENT_SECRET** value shown in the application details. This value will be used in Step 7.
+After the application is created, open the application in IBM Verify and record the **SUBJECT_CLIENT_ID** and **SUBJECT_CLIENT_SECRET** value shown in the application details. These value will be used in Step 7.
 
 ```text
 SUBJECT_CLIENT_ID=<subject-client-id>
@@ -718,7 +718,7 @@ Create an IBM Verify application for OAuth 2.0 Token Exchange as defined by RFC 
 
 The Token Exchange application is used to authenticate the request to IBM Verify's Security Token Service (STS). It is separate from the agent OAuth application created in Step 2:
 
-### Create & Configure the OpenID connect for token exchange
+### Create & Configure the OpenID connect for token exchange application
 
 ### Create the STS client
 
