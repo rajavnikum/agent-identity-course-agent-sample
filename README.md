@@ -284,7 +284,7 @@ curl --request POST "$TENANT/oauth2/register" \
 
 The supplied DCR payload creates the OAuth application required by this sample with the Client Credentials grant and the agent.run scope.
 
-After the DCR application is created, open the application in IBM Verify and record the **ACTOR_CLIENT_ID** and **ACTOR_CLIENT_SECRET** and value shown in the application details. This value will be used in Step 7.
+After the DCR application is created, open the application in IBM Verify and record the **ACTOR_CLIENT_ID** and **ACTOR_CLIENT_SECRET** and value shown in the application details. These value will be used in Step 7.
 
 ```bash
 export ACTOR_CLIENT_ID="<actor-client-id>"
@@ -338,6 +338,7 @@ For this tutorial, **Onboard agent** through **one** of the following methods:
 - cURL
 - Postman
 - Insomnia
+- IBM Verify UI
 
 ### Using cURL
 ```
