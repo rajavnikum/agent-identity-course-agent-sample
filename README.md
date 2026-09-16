@@ -756,7 +756,7 @@ In the IBM Verify administration console:
 
    b. Configure the consent mapping rule so that IBM Security Verify derives the minimum OAuth scope required for the requested agent action from the `authorization_details` received during Token Exchange.
 
-   The Course Agent does not decide whether an operation requires `course.read` or `course.enroll`. Instead, the application describes the requested operation in the `authorization_details` parameter, and IBM Security Verify maps that action to the appropriate scope.
+   The Course Agent Application does not decide whether an operation requires `course.read` or `course.enroll`. Instead, the application describes the requested operation in the `authorization_details` parameter, and IBM Security Verify maps that action to the appropriate scope.
 
    For example, when the user asks:
 
